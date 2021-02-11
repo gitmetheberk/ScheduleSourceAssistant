@@ -1,15 +1,16 @@
-let changeColor = document.getElementById('changeColor');
-
-chrome.storage.sync.get('color', function(data) {
-  changeColor.style.backgroundColor = data.color;
-  changeColor.setAttribute('value', data.color);
+// Add a handler for the enable button
+popup_enable = document.getElementById("popup_enable");
+popup_enable.addEventListener("click", async () =>{
+  // If the extension is already loaded, this should cause it to reload
+  window.alert("test")
 });
 
-changeColor.onclick = function(element) {
-    let color = element.target.value;
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      chrome.tabs.executeScript(
-          tabs[0].id,
-          {code: 'document.body.style.backgroundColor = "' + color + '";'});
-    });
-  };
+
+
+// Source: https://developer.chrome.com/docs/extensions/mv3/getstarted/
+// // Initialize button with user's preferred color
+// let changeColor = document.getElementById("changeColor");
+
+// chrome.storage.sync.get("color", ({ color }) => {
+//   changeColor.style.backgroundColor = color;
+// });

@@ -2,13 +2,13 @@
     "name": "Schedule Source Assistant",
     "version": "0.01",
     "description": "A custom schedule source assistant for Help Desk Central student leaders",
-    "permissions": ["activeTab", "declarativeContent", "storage"],
+    "permissions": ["tabs", "scripting", "storage"],
     "host_permissions": [
         "*://developer.chrome.com/*",
         "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All"
       ],
     "background": {
-        "service_worker": "service_worker.js"
+        "service_worker": "background.js"
     },
     "options_page": "options.html",
     "action":{
