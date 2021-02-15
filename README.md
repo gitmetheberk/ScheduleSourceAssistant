@@ -1,6 +1,25 @@
-# ScheduleSource_Extension
+# Schedule Source Assistant
 
-## Sources/Referenced:
+## Installation
+1. Download and extract the .zip file containing the extension
+2. Save the folder somewhere you'll be able to find later
+3. Open the menu by clicking on the three dots in the top right of the browser
+4. Click "More tools"
+5. Click "Extensions"
+6. In the top right, click "Developer Mode"
+7. Click "Load unpacked"
+8. Select the folder containing the extension
+9. The extension should now be showing up 
+
+### MacOS - Additional Instructions
+Due to an issue with Chrome native notifications and macs running Catalina or higher versions of MacOS, there are a few extra steps to take to enable extension functionality:
+1. Enter chrome://flags in the address bar and hit enter
+2. Search for "Enable native notifications"
+3. Change "Enable native notifications" to <b>Disabled</b>
+4. Restart Google Chrome
+
+
+#### Sources/Referenced:
 1. https://developer.chrome.com/
 2. https://stackoverflow.com/questions/38261197/how-to-check-if-a-key-is-set-in-chrome-storage/38261950
 3. https://stackoverflow.com/questions/40613173/chrome-extension-oninstalled-event
