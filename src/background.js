@@ -91,9 +91,9 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
                     */
 
                     // Convert start and end times to relative minutes into the day, ex. 8am = 480
-                    for (i = 0; i < rows.length; i++){
+                    for (let i = 0; i < rows.length; i++){
                         // Loop through start and end times
-                        for (j = 6; j < 8; j++){
+                        for (let j = 6; j < 8; j++){
                             // Get the hour and minute out of the string, time = [hour, minute]
                             let time = rows[i][j].split(":")
                             let pm = time[1].endsWith("PM");
@@ -170,7 +170,7 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
                         type: 'basic',
                         title: 'notification test',
                         message: "big test",
-                        iconUrl: undefined
+                        iconUrl: "images/icon48.png"
                     }
                       chrome.notifications.create('limitNotif', notif)
 
