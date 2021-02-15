@@ -20,7 +20,7 @@
 
 #shifts {
   width:250px;
-  height:200px;
+  height:220px;
 }
 
 #shifts_label {
@@ -29,7 +29,7 @@
 
 .chkbox {
   padding-left: 10px;
-  font-weight: bold;
+  /*font-weight: bold;*/
   font-size:small
 }
 

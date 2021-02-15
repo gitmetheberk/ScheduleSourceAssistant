@@ -1,4 +1,4 @@
-// TODO Configuration options for padding_minutes, before_minutes, check_on_15
+// TODO Configuration options for padding_minutes, before_minutes
 
 // List of all shift types (may change from time to time, too many as is)
 let all_shifts = ["Phones", "Bomgar", "Tier 2", "Trainee", "Student Leader", "Info Desk", "Counter", "Knowledge", "Endpoint Team", "TAMU-Health-Support", "Project"]
@@ -22,7 +22,10 @@ save_config.addEventListener("click", async () =>{
     }
 
     // Update checkbox status
-    chrome.storage.sync.set({send_empty_notification: document.getElementById("send_empty_notifications").checked})
+    chrome.storage.sync.set({
+        send_empty_notification: document.getElementById("send_empty_notifications").checked,
+        check_on_15: document.getElementById("check_on_15").checked
+    });
 
 
 
@@ -78,6 +81,11 @@ chrome.storage.sync.get({
     // Pre-check the send_empty_notifications checkbox
     if (configuration_dict.send_empty_notification){
         document.getElementById("send_empty_notifications").checked = true;
+    }
+
+    // Pre-check the check_on_15 checkbox
+    if (configuration_dict.check_on_15){
+        document.getElementById("check_on_15").checked = true;
     }
 
 
