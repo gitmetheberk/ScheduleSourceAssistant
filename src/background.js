@@ -56,6 +56,7 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
             } else {
                 // First, reload to the tab to make sure we're getting the most up to date schedule information
 
+                //! Uncomment this after testing
                 chrome.tabs.reload(data.tabId);
                 console.log("reloading")
 
@@ -153,11 +154,13 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
                     rows.forEach(function(row, index){
                         // Check for starting shift
                         if (row[6] == time_to_check){
-                            technicians_starting.push(`${row[3]} - ${row[2]}`)
+                            //technicians_starting.push(`${row[3]} - ${row[2]}`)
+                            technicians_starting.push(row)
                         
                         // Check for ending shift
                         } else if (row[7] == time_to_check){
-                            technicians_ending.push(`${row[3]} - ${row[2]}`)
+                            //technicians_ending.push(`${row[3]} - ${row[2]}`)
+                            technicians_ending.push(row)
                         }
                     });
 
@@ -166,18 +169,69 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
                     console.log(rows)
 
                     // Notifications
-                    let notif = {
-                        type: 'basic',
-                        title: 'notification test',
-                        message: "big test",
-                        iconUrl: "images/icon48.png"
+                    if (technicians_starting.length == 0 && technicians_ending.length == 0){
+                        console.log("No shift changes occuring")
+
+                        // If no shifts are changing, send a basic notification
+                        let notification = {
+                            type: 'basic',
+                            title: 'No shift changes occuring',
+                            message: ``,
+                            iconUrl: "images/icon48.png",
+                        }
+                          chrome.notifications.create(undefined, notification)
+                    } else {
+                        // TODO These notification titles are open for change
+                        // Determine title
+                        let title;
+                        if (technicians_starting.length != 0 && technicians_ending.length == 0){
+                            title = "Shifts starting"
+                        } else if (technicians_starting.length == 0 && technicians_ending.length != 0){
+                            title = "Shifts ending"
+                        } else {
+                            title = "Shift change"
+                        }
+
+                        // Construct and send the notification (yes, I know the logic is redundant, but it's cleaner to have it in one place)
+                        let notif_Items = [];
+                        if (technicians_starting.length != 0){
+                            notif_Items.push({
+                                title: `Technicians starting`,
+                                message: ``
+                            })
+                            technicians_starting.forEach(function(shift){
+                                notif_Items.push({
+                                    title: `${shift[3]}`,
+                                    message: `${shift[2]}`
+                                })
+                            })
+                        }
+                        if (technicians_ending.length != 0){
+                            notif_Items.push({
+                                title: `Technicians ending`,
+                                message: ``
+                            })
+                            technicians_ending.forEach(function(shift){
+                                notif_Items.push({
+                                    title: `${shift[3]}`,
+                                    message: `Shift ending`
+                                })
+                            })
+                        }
+                        
+                        // Form the notification and send
+                        let notification = {
+                            type: 'list',
+                            title: title,
+                            message: "",
+                            iconUrl: "images/icon48.png",
+                            items: notif_Items
+                        }           
+                        chrome.notifications.create(undefined, notification)
                     }
-                      chrome.notifications.create('limitNotif', notif)
-
-                    // TODO V0.1 complete, begin user studies and alpha tests
-
 
                 });
+                // Delay following page reload in ms (5 seconds seems safe even for slower computers)
                 }, 5000);
             }
         })
