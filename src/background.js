@@ -256,6 +256,5 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
 
 // TODO Add a onStart handler to disable if the page is no longer open
 // TODO Add an onClose handler for tabs to disable if the teamwork tab is closed
-// TODO Icons for the manifest
 // TODO Add check for limited media dispaly schedule source
 // TODO Account for cases where a technician is getting off & getting on (maybe just say transitioning techs?)
