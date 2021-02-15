@@ -57,9 +57,13 @@ chrome.storage.sync.get({
     interval_minutes : 15,
     range_minutes: 7,  // 0 <= range_minutes < interval_minutes/2, margin around time to check to activate, mostly used during testing, will be deprecated with better logic in the future
     check_on_15: true,  // Determines if the extension should check on 15,45 minute intervals, only here incase send_empty_notification is enabled
-    send_empty_notification: false  // If true, notifications of "No shift changes occuring" will be sent
-
+    send_empty_notification: false,  // If true, notifications of "No shift changes occuring" will be sent
+    shifts_to_show: []
 }, function(configuration_dict){
+    if (configuration_dict.shifts_to_show.length == 0){
+        console.error("shifts_to_show.length = 0, something has gone wrong")
+        return;
+    }
 
     // TODO Reference the configuration_dict directly instead of assigning variables
     // Grab configuration variables out of the dict/json
@@ -81,12 +85,13 @@ chrome.storage.sync.get({
         chrome.tabs.get(data.tabId, function(tab){
             if (tab.url != schedulesource_url){
                 // TODO Implement error handling and user notification of the issue
+                chrome.storage.sync.set({tabId: -1})
                 console.log("Schedule Source is not where it should be")
             } else {
                 // First, reload to the tab to make sure we're getting the most up to date schedule information
 
                 //! Uncomment this after testing
-                chrome.tabs.reload(data.tabId);
+                //chrome.tabs.reload(data.tabId);
                 console.log("reloading")
 
                 // Find the current shift change
@@ -108,7 +113,6 @@ chrome.storage.sync.get({
 
                 } else {
                     // TODO Fix the edge cases when the extension shouldn't be running by resetting the alarm
-                    // TODO This could possibly be better done with a loop
                     // Must be 15, 30, or 45
                     if ((minutes >= 15 - range_minutes) && (minutes <= 15 + range_minutes)){
                         time_to_check = (now.getHours()) * 60 + 15
@@ -182,35 +186,45 @@ chrome.storage.sync.get({
                     }
 
                     // TODO It would be more efficient to do this earlier when we're already looping through technicians
+                    // TODO Overflow warnings if total len > 4 (ex. make the fourth entry the +x more changes)
                     // Find the technicians getting on
                     let technicians_starting = [];
                     let technicians_ending = [];
                     rows.forEach(function(row, index){
-                        if (row[6] == time_to_check && row[3] == " ---EMPTY--- "){
+                        if (row[6] == time_to_check && row[3] != " ---EMPTY--- "){
                             //technicians_starting.push(`${row[3]} - ${row[2]}`)
-                            technicians_starting.push(row)
+                            if (configuration_dict.shifts_to_show.includes(row[2])){
+                                technicians_starting.push(row)
+                            }
                         
                         // Check for ending shift
-                        } else if (row[7] == time_to_check && row[3] == " ---EMPTY--- "){
+                        } else if (row[7] == time_to_check && row[3] != " ---EMPTY--- "){
                             //technicians_ending.push(`${row[3]} - ${row[2]}`)
-                            technicians_ending.push(row)
+                            if (configuration_dict.shifts_to_show.includes(row[2])){
+                                technicians_ending.push(row)
+                            }
                         }
                     });
 
-                    //console.log(technicians_starting)
-                    //console.log(technicians_ending)
-                    //console.log(rows)
+                    // console.log(technicians_starting)
+                    // console.log(technicians_ending)
+                    // console.log(rows)
 
                     // Calculate the hour in terms of AM & PM for notification titles
                     let hour_AMPM;
-                    let AMPM = "AM";
-                    if ((time_to_check / 60) > 12){
+                    let AMPM;
+                    if (Math.floor(time_to_check / 60) > 12){
                         hour_AMPM = now.getHours() - 12
+                        AMPM = "PM"
+                    } else if (Math.floor(time_to_check / 60) == 12){
+                        hour_AMPM = 12
                         AMPM = "PM"
                     } else if (time_to_check < 60){
                         hour_AMPM = 12
+                        AMPM = "AM"
                     } else {
                         hour_AMPM = now.getHours()
+                        AMPM = "AM"
                     }
 
                     // Notifications
