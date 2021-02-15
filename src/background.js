@@ -91,7 +91,7 @@ chrome.storage.sync.get({
                 // First, reload to the tab to make sure we're getting the most up to date schedule information
 
                 //! Uncomment this after testing
-                //chrome.tabs.reload(data.tabId);
+                chrome.tabs.reload(data.tabId);
                 console.log("reloading")
 
                 // Find the current shift change
@@ -124,6 +124,11 @@ chrome.storage.sync.get({
                         console.error("Invalid or unknown time interval")
                     }
                 }
+                // Error correction for the edge case of midnight (I really hate AM/PM)
+                if (now.getHours() == 0){
+                    time_to_check += 60 * 24
+                }
+
                 console.log(`Shift change minutes: ${time_to_check}`)
 
                 // Check for check_on_15 option (does not check on :15 or :45)
@@ -164,8 +169,6 @@ chrome.storage.sync.get({
                        idx=9 = length in hours (can be used as a checksum)
                     */
 
-                    // ! MAJOR BUG
-                    // TODO Code around here (not sure exactly where) is not working past midnight
                     // Convert start and end times to relative minutes into the day, ex. 8am = 480
                     for (let i = 0; i < rows.length; i++){
                         // Loop through start and end times
@@ -186,7 +189,6 @@ chrome.storage.sync.get({
                     }
 
                     // TODO It would be more efficient to do this earlier when we're already looping through technicians
-                    // TODO Overflow warnings if total len > 4 (ex. make the fourth entry the +x more changes)
                     // Find the technicians getting on
                     let technicians_starting = [];
                     let technicians_ending = [];
@@ -206,9 +208,9 @@ chrome.storage.sync.get({
                         }
                     });
 
-                    // console.log(technicians_starting)
-                    // console.log(technicians_ending)
-                    // console.log(rows)
+                    console.log(technicians_starting)
+                    console.log(technicians_ending)
+                    console.log(rows)
 
                     // Calculate the hour in terms of AM & PM for notification titles
                     let hour_AMPM;
@@ -279,6 +281,26 @@ chrome.storage.sync.get({
                                 })
                             })
                         }
+
+                        // Add in overflow warnings
+                        if (technicians_starting.length >= 4){
+                            notif_Items.splice(3, 0, {
+                                title: `${technicians_starting.length - 3} more starting`,
+                                message: `${technicians_ending.length} ending`
+                            })
+                        } else if (technicians_starting.length == 3 && technicians_ending.length > 1){
+                            notif_Items.splice(3, 0, {
+                                title: `${0} more starting`,
+                                message: `${technicians_ending.length} ending`
+                            })
+                        } else if (technicians_ending.length > 4){
+                            notif_Items.splice(3, 0, {
+                                title: `${0} more starting`,
+                                message: `${technicians_ending.length - 3} ending`
+                            })
+                        }
+
+                        console.log(notif_Items)
                         
                         // Form the notification and send
                         let notification = {
@@ -305,3 +327,4 @@ chrome.storage.sync.get({
 // TODO Add check for limited media dispaly schedule source
 // TODO Account for cases where a technician is getting off & getting on (maybe just say transitioning techs?)
 // TODO Before releasing v1, remove extra console.logs
+// TODO Add MacOS specific notification text (since they can't see shift info)
