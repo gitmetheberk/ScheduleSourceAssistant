@@ -193,14 +193,14 @@ chrome.storage.sync.get({
                     let technicians_starting = [];
                     let technicians_ending = [];
                     rows.forEach(function(row, index){
-                        if (row[6] == time_to_check && row[3] != " ---EMPTY--- "){
+                        if (row[6] == time_to_check && row[3] != "---EMPTY---"){
                             //technicians_starting.push(`${row[3]} - ${row[2]}`)
                             if (configuration_dict.shifts_to_show.includes(row[2])){
                                 technicians_starting.push(row)
                             }
                         
                         // Check for ending shift
-                        } else if (row[7] == time_to_check && row[3] != " ---EMPTY--- "){
+                        } else if (row[7] == time_to_check && row[3] != "---EMPTY---"){
                             //technicians_ending.push(`${row[3]} - ${row[2]}`)
                             if (configuration_dict.shifts_to_show.includes(row[2])){
                                 technicians_ending.push(row)
