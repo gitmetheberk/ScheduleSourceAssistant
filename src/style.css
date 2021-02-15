@@ -14,6 +14,22 @@
   font-size: small;
 }
 
-body {
+#popup {
   background-color: #B3B3B3
 }
+
+#shifts {
+  width:250px;
+  height:200px;
+}
+
+#shifts_label {
+  font-size:medium;
+}
+
+.chkbox {
+  padding-left: 10px;
+  font-weight: bold;
+  font-size:small
+}
+

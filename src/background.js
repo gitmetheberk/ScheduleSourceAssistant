@@ -14,7 +14,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
             interval_minutes: 15,  // Length of the interval (15 for deployment)
             range_minutes: 7,  // 0 <= range_minutes < interval_minutes/2, margin around time to check to activate, mostly used during testing, will be deprecated with better logic in the future
             check_on_15: true,  // Determines if the extension should check on 15,45 minute intervals, only here incase send_empty_notification is enabled
-            send_empty_notification: false,  // If true, notifications of "No shift changes occuring" will be sent
+            send_empty_notification: true,  // If true, notifications of "No shift changes occuring" will be sent
             before_minutes: 0,  // Minutes before 00, 15, 30, 45 the alarm will trigger
             padding_minutes: 0,  // Upon activating the extension, number of minutes past 00, 15, 30, 45 where it will still trigger
             shifts_to_show: ["Phones", "Bomgar", "Tier 2"]  // Array of strings, shift types to show     
@@ -160,6 +160,8 @@ chrome.storage.sync.get({
                        idx=9 = length in hours (can be used as a checksum)
                     */
 
+                    // ! MAJOR BUG
+                    // TODO Code around here (not sure exactly where) is not working past midnight
                     // Convert start and end times to relative minutes into the day, ex. 8am = 480
                     for (let i = 0; i < rows.length; i++){
                         // Loop through start and end times

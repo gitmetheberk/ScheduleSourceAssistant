@@ -5,11 +5,18 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <div style="text-align:center">
-    <h3>Options pending, please blame the dev</h3>
-    <a href="mailto:becker@tamu.edu"><strong>Email me</strong></a>
-    </div>
+    <form>
+      <label for="shifts" id="shifts_label"><strong>Choose which shift types will be shown:</strong><br></label>
+      <select name="shifts" id="shifts" multiple>
+      </select>
+      <br>
+    </form>
+    <p>Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</p>
+    <br>
+    <input type="checkbox" id="send_empty_notifications">
+    <label class="chkbox" for="send_empty_notifications">Send notifications when nobody is getting on or off?</label>
+    <br><br><br>
+    <button id="save_config"><strong>Save Configuration</strong>
   </body>
   <script src="options.js"></script>
-  <!--//TODO Options to choose which shift types are shown-->
 </html>

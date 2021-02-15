@@ -38,3 +38,5 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 6. https://stackoverflow.com/questions/39840560/chrome-extension-get-active-tab-id-in-browser-action-popup
 7. https://sung.codes/blog/2019/02/17/getting-dom-content-from-chrome-extension-2/
 8. https://stackoverflow.com/questions/35882089/popup-is-not-appearing-when-used-page-action/35882614
+9. https://stackoverflow.com/questions/11821261/how-to-get-all-selected-values-from-select-multiple-multiple
+10. https://stackoverflow.com/questions/14707313/set-checkbox-label-to-right-side-or-fixed-position
