@@ -25,12 +25,11 @@ chrome.runtime.onInstalled.addListener(function(details) {
     }
   });
 
-// Receive the message containing the HTML from schedule source
-chrome.runtime.onMessage.addListener(function(request, sender) {
-if (request.action == "getSource") {
-    message.innerText = request.source;
-}
-console.log(message)
+// [8] - Hanlder to enable popup.html when the icon is activated (weird this doesn't happen automatically, right?)
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.message === "activate_icon") {
+        chrome.pageAction.show(sender.tab.id);
+    } console.log("Message received")
 });
 
 // Add a handler to catch the chrome.alarm events
@@ -59,6 +58,50 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
                 //! Uncomment this after testing
                 chrome.tabs.reload(data.tabId);
                 console.log("reloading")
+
+                //* Hardcoded configuration values
+                let range_minutes = 7;
+                let check_on_15 = true;
+
+                // Find the current shift change
+                let now = new Date;
+                let minutes = now.getMinutes();
+                let time_to_check
+
+                if ((minutes % interval_minutes) == 0){
+                    // We're on an interval
+                    time_to_check = minutes + now.getHours() * 60
+
+                } else if (minutes <= range_minutes){
+                    // We just passed the beginning of an hour
+                    time_to_check = now.getHours() * 60
+
+                } else if (minutes >= 60 - range_minutes) {
+                    // We're coming up on an hour
+                    time_to_check = (now.getHours() + 1) * 60
+
+                } else {
+                    // TODO Fix the edge cases when the extension shouldn't be running by resetting the alarm
+                    // TODO This could possibly be better done with a loop
+                    // Must be 15, 30, or 45
+                    if ((minutes >= 15 - range_minutes) && (minutes <= 15 + range_minutes)){
+                        time_to_check = (now.getHours()) * 60 + 15
+                    } else if ((minutes >= 30 - range_minutes) && (minutes <= 30 + range_minutes)){
+                        time_to_check = (now.getHours()) * 60 + 30
+                    } else if ((minutes >= 45 - range_minutes) && (minutes <= 45 + range_minutes)){
+                        time_to_check = (now.getHours()) * 60 + 45
+                    } else {
+                        console.error("Invalid or unknown time interval")
+                    }
+                }
+                console.log(`Shift change minutes: ${time_to_check}`)
+
+                // Check for check_on_15 option
+                if (!check_on_15 && ((time_to_check % 15) == 0)){
+                    console.log("Aborting due to check_on_15")
+                    return;
+                }
+                
 
                 // Provide a few seconds for page to load
                 setTimeout(() => {
@@ -109,43 +152,6 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
                             }
                         }
                     }
-                    //* Hardcoded configuration values
-                    let range_minutes = 7;
-
-                    // Find the current shift change
-                    let now = new Date;
-                    let minutes = now.getMinutes();
-                    let time_to_check
-
-                    if ((minutes % interval_minutes) == 0){
-                        // We're on an interval
-                        time_to_check = minutes + now.getHours() * 60
-
-                    } else if (minutes <= range_minutes){
-                        // We just passed the beginning of an hour
-                        time_to_check = now.getHours() * 60
-
-                    } else if (minutes >= 60 - range_minutes) {
-                        // We're coming up on an hour
-                        time_to_check = (now.getHours() + 1) * 60
-
-                    } else {
-                        // TODO Fix the edge cases when the extension shouldn't be running by resetting the alarm
-                        // TODO This could possibly be better done with a loop
-                        // Must be 15, 30, or 45
-                        if ((minutes >= 15 - range_minutes) && (minutes <= 15 + range_minutes)){
-                            time_to_check = (now.getHours()) * 60 + 15
-                        } else if ((minutes >= 30 - range_minutes) && (minutes <= 30 + range_minutes)){
-                            time_to_check = (now.getHours()) * 60 + 30
-                        } else if ((minutes >= 45 - range_minutes) && (minutes <= 45 + range_minutes)){
-                            time_to_check = (now.getHours()) * 60 + 45
-                        } else {
-                            console.error("Invalid or unknown time interval")
-                        }
-                    }
-
-                    console.log(`Shift change minutes: ${time_to_check}`)
-
 
                     // TODO It would be more efficient to do this earlier when we're already looping through technicians
                     // Find the technicians getting on
@@ -164,9 +170,19 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
                         }
                     });
 
-                    console.log(technicians_starting)
-                    console.log(technicians_ending)
-                    console.log(rows)
+                    //console.log(technicians_starting)
+                    //console.log(technicians_ending)
+                    //console.log(rows)
+
+                    // Calculate the hour in terms of AM & PM for notification titles
+                    let hour_AMPM;
+                    let AMPM = "AM";
+                    if ((time_to_check / 60) > 12){
+                        hour_AMPM = now.getHours() - 12
+                        AMPM = "PM"
+                    } else if ((time_to_check / 60) == 0){
+                        hour_AMPM = 12
+                    }
 
                     // Notifications
                     if (technicians_starting.length == 0 && technicians_ending.length == 0){
@@ -175,7 +191,7 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
                         // If no shifts are changing, send a basic notification
                         let notification = {
                             type: 'basic',
-                            title: 'No shift changes occuring',
+                            title: `No shift changes occuring ${hour_AMPM}:${time_to_check % 60} ${AMPM}`,
                             message: ``,
                             iconUrl: "images/icon48.png",
                         }
@@ -185,20 +201,20 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
                         // Determine title
                         let title;
                         if (technicians_starting.length != 0 && technicians_ending.length == 0){
-                            title = "Shifts starting"
+                            title = `Shifts starting ${hour_AMPM}:${time_to_check % 60} ${AMPM}`
                         } else if (technicians_starting.length == 0 && technicians_ending.length != 0){
-                            title = "Shifts ending"
+                            title = `Shifts ending ${hour_AMPM}:${time_to_check % 60} ${AMPM}`
                         } else {
-                            title = "Shift change"
+                            title = `Shift change ${hour_AMPM}:${time_to_check % 60} ${AMPM}`
                         }
 
                         // Construct and send the notification (yes, I know the logic is redundant, but it's cleaner to have it in one place)
                         let notif_Items = [];
                         if (technicians_starting.length != 0){
-                            notif_Items.push({
-                                title: `Technicians starting`,
-                                message: ``
-                            })
+                            // notif_Items.push({
+                            //     title: `Technicians starting`,
+                            //     message: ``
+                            // })
                             technicians_starting.forEach(function(shift){
                                 notif_Items.push({
                                     title: `${shift[3]}`,
@@ -207,10 +223,10 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
                             })
                         }
                         if (technicians_ending.length != 0){
-                            notif_Items.push({
-                                title: `Technicians ending`,
-                                message: ``
-                            })
+                            // notif_Items.push({
+                            //     title: `Technicians ending`,
+                            //     message: ``
+                            // })
                             technicians_ending.forEach(function(shift){
                                 notif_Items.push({
                                     title: `${shift[3]}`,

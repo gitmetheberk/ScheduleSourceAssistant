@@ -56,6 +56,7 @@ popup_enable.addEventListener("click", async () =>{
         }
         console.log(`Alarm starting in ${alarmStart_ms / 1000} seconds or ${alarmStart_ms / 60000} minutes`)
 
+          // TODO If the alarm was started with alarmStart_ms=0, delay, then start an alarm which starts on the correct minute
           // Activate the alarm, if alarmDelay_minutes = 0, to avoid error, use a different alarm creation
           chrome.alarms.create('run',{
             when: Date.now() + alarmStart_ms,
