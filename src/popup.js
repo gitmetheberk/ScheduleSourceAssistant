@@ -1,11 +1,20 @@
 // Add a handler for the enable button
 let popup_enable = document.getElementById("popup_enable");
 popup_enable.addEventListener("click", async () =>{
-  //* Temporary hardcoded configuration variables
-  let interval_minutes = 15  // Length of the interval (15 for deployment)
-  let before_minutes = 0  // Minutes before 00, 15, 30, 45 the alarm will trigger
-  let padding_minutes = 0  // Upon activating the extension, number of minutes past 00, 15, 30, 45 where it will still trigger
-  let schedulesource_url = "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All"
+// Load configuration variables from storage (welcome to the highest level of callback hell (I didn't tab this because there are two many tabs as is))
+chrome.storage.sync.get({
+  schedulesource_url: "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",  // This is here as a failsafe in the event the URL changes in the future and needs to be configured manually
+  interval_minutes : 15,
+  before_minutes: 0,  // Minutes before 00, 15, 30, 45 the alarm will trigger
+  padding_minutes: 0  // Upon activating the extension, number of minutes past 00, 15, 30, 45 where it will still trigger
+}, function(configuration_dict){
+  
+  // TODO Reference the configuration_dict directly instead of assigning variables
+  // Grab configuration variables out of the configuration_dict
+  let interval_minutes = configuration_dict.interval_minutes  // Length of the interval (15 for deployment)
+  let before_minutes = configuration_dict.before_minutes  // Minutes before 00, 15, 30, 45 the alarm will trigger
+  let padding_minutes = configuration_dict.padding_minutes  // Upon activating the extension, number of minutes past 00, 15, 30, 45 where it will still trigger
+  let schedulesource_url = configuration_dict.schedulesource_url
 
   // TODO Fix indentation on this section, it's all sorts of messed up
   // Get the current status and swap it, activating and deacting the alarm as needed
@@ -79,6 +88,7 @@ popup_enable.addEventListener("click", async () =>{
       });
     }
   })
+});
 });
 
 // Update the status text based on current operational status

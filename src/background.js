@@ -7,7 +7,16 @@ chrome.runtime.onInstalled.addListener(function(details) {
         // Initalize values in sync storage
         chrome.storage.sync.set({
             version: 0.1, 
-            status: false
+            status: false,
+
+            // Configuration variables
+            schedulesource_url: "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",
+            interval_minutes: 15,  // Length of the interval (15 for deployment)
+            range_minutes: 7,  // 0 <= range_minutes < interval_minutes/2, margin around time to check to activate, mostly used during testing, will be deprecated with better logic in the future
+            check_on_15: true,  // Determines if the extension should check on 15,45 minute intervals, only here incase send_empty_notification is enabled
+            send_empty_notification: false,  // If true, notifications of "No shift changes occuring" will be sent
+            before_minutes: 0,  // Minutes before 00, 15, 30, 45 the alarm will trigger
+            padding_minutes: 0  // Upon activating the extension, number of minutes past 00, 15, 30, 45 where it will still trigger          
         })
 
 
@@ -19,26 +28,45 @@ chrome.runtime.onInstalled.addListener(function(details) {
             status: false
         })
 
+        // TODO Add method to determine if any new sync variables need to be created and then create them
+
 
     } else {
         console.error(["Invalid onInstalled reason", details.reason])
     }
   });
 
+
 // [8] - Hanlder to enable popup.html when the icon is activated (weird this doesn't happen automatically, right?)
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.message === "activate_icon") {
         chrome.pageAction.show(sender.tab.id);
-    } console.log("Message received")
+    } //console.log("Message received")
 });
+
 
 // Add a handler to catch the chrome.alarm events
 chrome.alarms.onAlarm.addListener(function(alarm) {
+    // TODO Add check to make sure it's the 'run' alarm
     console.log("Service worker alarm, executing script")
 
-    //* Temporary hardcoded configuration variables
-    let schedulesource_url = "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All"
-    let interval_minutes = 15  // Length of the interval (15 for deployment)
+// Load configuration variables from storage (welcome to the highest level of callback hell (I didn't tab this because there are two many tabs as is))
+chrome.storage.sync.get({
+    schedulesource_url: "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",  // This is here as a failsafe in the event the URL changes in the future and needs to be configured manually
+    interval_minutes : 15,
+    range_minutes: 7,  // 0 <= range_minutes < interval_minutes/2, margin around time to check to activate, mostly used during testing, will be deprecated with better logic in the future
+    check_on_15: true,  // Determines if the extension should check on 15,45 minute intervals, only here incase send_empty_notification is enabled
+    send_empty_notification: false  // If true, notifications of "No shift changes occuring" will be sent
+
+}, function(configuration_dict){
+
+    // TODO Reference the configuration_dict directly instead of assigning variables
+    // Grab configuration variables out of the dict/json
+    let schedulesource_url = configuration_dict.schedulesource_url;
+    let interval_minutes = configuration_dict.interval_minutes;
+    let range_minutes = configuration_dict.range_minutes;
+    let check_on_15 = configuration_dict.check_on_15;
+    let send_empty_notification = configuration_dict.send_empty_notification;
     
     // Grab the schedule source tabId
     chrome.storage.sync.get({tabId: -1}, function(data){
@@ -58,10 +86,6 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
                 //! Uncomment this after testing
                 chrome.tabs.reload(data.tabId);
                 console.log("reloading")
-
-                //* Hardcoded configuration values
-                let range_minutes = 7;
-                let check_on_15 = true;
 
                 // Find the current shift change
                 let now = new Date;
@@ -96,8 +120,8 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
                 }
                 console.log(`Shift change minutes: ${time_to_check}`)
 
-                // Check for check_on_15 option
-                if (!check_on_15 && ((time_to_check % 15) == 0)){
+                // Check for check_on_15 option (does not check on :15 or :45)
+                if (!check_on_15 && ((time_to_check % 15) == 0) && ((time_to_check % 60) != 30)){
                     console.log("Aborting due to check_on_15")
                     return;
                 }
@@ -189,23 +213,25 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
                         console.log("No shift changes occuring")
 
                         // If no shifts are changing, send a basic notification
-                        let notification = {
-                            type: 'basic',
-                            title: `No shift changes occuring ${hour_AMPM}:${time_to_check % 60} ${AMPM}`,
-                            message: ``,
-                            iconUrl: "images/icon48.png",
+                        if (send_empty_notification) {
+                            let notification = {
+                                type: 'basic',
+                                title: `No shift changes occuring ${hour_AMPM}:${((time_to_check % 60) < 10) ? "0" : ""}${time_to_check % 60} ${AMPM}`,
+                                message: ``,
+                                iconUrl: "images/icon48.png",
+                            }
+                            chrome.notifications.create(undefined, notification)
                         }
-                          chrome.notifications.create(undefined, notification)
                     } else {
                         // TODO These notification titles are open for change
                         // Determine title
                         let title;
                         if (technicians_starting.length != 0 && technicians_ending.length == 0){
-                            title = `Shifts starting ${hour_AMPM}:${time_to_check % 60} ${AMPM}`
+                            title = `Shifts starting ${hour_AMPM}:${((time_to_check % 60) < 10) ? "0" : ""}${time_to_check % 60} ${AMPM}`
                         } else if (technicians_starting.length == 0 && technicians_ending.length != 0){
-                            title = `Shifts ending ${hour_AMPM}:${time_to_check % 60} ${AMPM}`
+                            title = `Shifts ending ${hour_AMPM}:${((time_to_check % 60) < 10) ? "0" : ""}${time_to_check % 60} ${AMPM}`
                         } else {
-                            title = `Shift change ${hour_AMPM}:${time_to_check % 60} ${AMPM}`
+                            title = `Shift change ${hour_AMPM}:${((time_to_check % 60) < 10) ? "0" : ""}${time_to_check % 60} ${AMPM}`
                         }
 
                         // Construct and send the notification (yes, I know the logic is redundant, but it's cleaner to have it in one place)
@@ -253,8 +279,10 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
         })
     });
 });
+});
 
 // TODO Add a onStart handler to disable if the page is no longer open
 // TODO Add an onClose handler for tabs to disable if the teamwork tab is closed
 // TODO Add check for limited media dispaly schedule source
 // TODO Account for cases where a technician is getting off & getting on (maybe just say transitioning techs?)
+// TODO Before releasing v1, remove extra console.logs
