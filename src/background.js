@@ -16,7 +16,8 @@ chrome.runtime.onInstalled.addListener(function(details) {
             check_on_15: true,  // Determines if the extension should check on 15,45 minute intervals, only here incase send_empty_notification is enabled
             send_empty_notification: false,  // If true, notifications of "No shift changes occuring" will be sent
             before_minutes: 0,  // Minutes before 00, 15, 30, 45 the alarm will trigger
-            padding_minutes: 0  // Upon activating the extension, number of minutes past 00, 15, 30, 45 where it will still trigger          
+            padding_minutes: 0,  // Upon activating the extension, number of minutes past 00, 15, 30, 45 where it will still trigger
+            shifts_to_show: ["Phones", "Bomgar", "Tier 2"]  // Array of strings, shift types to show     
         })
 
 
@@ -68,6 +69,7 @@ chrome.storage.sync.get({
     let check_on_15 = configuration_dict.check_on_15;
     let send_empty_notification = configuration_dict.send_empty_notification;
     
+    // TODO It may make more sense to store this in local storage
     // Grab the schedule source tabId
     chrome.storage.sync.get({tabId: -1}, function(data){
         if (data.tabId == -1){
@@ -182,13 +184,12 @@ chrome.storage.sync.get({
                     let technicians_starting = [];
                     let technicians_ending = [];
                     rows.forEach(function(row, index){
-                        // Check for starting shift
-                        if (row[6] == time_to_check){
+                        if (row[6] == time_to_check && row[3] == " ---EMPTY--- "){
                             //technicians_starting.push(`${row[3]} - ${row[2]}`)
                             technicians_starting.push(row)
                         
                         // Check for ending shift
-                        } else if (row[7] == time_to_check){
+                        } else if (row[7] == time_to_check && row[3] == " ---EMPTY--- "){
                             //technicians_ending.push(`${row[3]} - ${row[2]}`)
                             technicians_ending.push(row)
                         }
@@ -204,8 +205,10 @@ chrome.storage.sync.get({
                     if ((time_to_check / 60) > 12){
                         hour_AMPM = now.getHours() - 12
                         AMPM = "PM"
-                    } else if ((time_to_check / 60) == 0){
+                    } else if (time_to_check < 60){
                         hour_AMPM = 12
+                    } else {
+                        hour_AMPM = now.getHours()
                     }
 
                     // Notifications
