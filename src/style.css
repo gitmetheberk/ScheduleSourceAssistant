@@ -8,6 +8,18 @@
     align-self: center
   }
 
+#popup_run_once {
+  height: 30px;
+  text-align: center;
+  outline: none;
+  margin: auto;
+  background-color: #db9704;
+  border-radius: 6px;
+  align-self: center;
+  display: inline-block;*/
+
+}
+
 #status {
   /* white-space: nowrap; */
   text-align: center;

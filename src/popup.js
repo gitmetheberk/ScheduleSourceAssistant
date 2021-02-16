@@ -91,6 +91,17 @@ chrome.storage.sync.get({
 });
 });
 
+
+// Add an event handler for the run once button
+let popup_run_once = document.getElementById("popup_run_once");
+popup_run_once.addEventListener("click", async () =>{
+  // Trigger the run_once alarm in one second
+  chrome.alarms.create('run_once',{
+    when: Date.now() + 1000,
+  })
+});
+
+
 // Update the status text based on current operational status
 function update_status(){
   // Get the current application status and update
@@ -107,7 +118,7 @@ function update_status(){
 update_status();  // Run update_status when the script is called
 
 
-// TEMP CODE
+//* TEMP CODE
 let popup_test = document.getElementById("popup_test");
 popup_test.addEventListener("click", async () =>{
   console.log("test button")
