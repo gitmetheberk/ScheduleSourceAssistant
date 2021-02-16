@@ -6,7 +6,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
         
         // Initalize values in sync storage
         chrome.storage.sync.set({
-            version: 0.1, 
+            version: 1, 
             status: false,
 
             // Configuration variables
