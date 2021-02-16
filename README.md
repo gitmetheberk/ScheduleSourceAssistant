@@ -25,17 +25,18 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 
 ## Using the extension
 1. Right click on the extension and click "Options"
-2. Configure the extenion as you see fit and save the configuration
+2. Configure the extenion as you'd like and save the configuration
 3. Navigate to todays schedule in schedule source
 4. Click on the extension (schedule source icon) in your extensions
 5. In the popup, click "Toggle" to activate the extension
+    * Alternatively, if you just want to run it once, click "Run once"
 6. Wait for the next shift change and see what happens!
 7. Report any bugs to becker@tamu.edu or open an issue in the repository (https://github.tamu.edu/matthew-becker/ScheduleSourceAssistant)
 
 
 ## Issues
 ### Not receiving notifications
-* Make sure notifications are enabled in Windows/MacOS
+* Make sure notifications are enabled in Windows/MacOS for Google Chrome
 
 
 ## Planned Features
