@@ -17,7 +17,9 @@ chrome.runtime.onInstalled.addListener(function(details) {
             send_empty_notification: true,  // If true, notifications of "No shift changes occuring" will be sent
             before_minutes: 0,  // Minutes before 00, 15, 30, 45 the alarm will trigger
             padding_minutes: 5,  // Upon activating the extension, number of minutes past 00, 15, 30, 45 where it will still trigger
-            shifts_to_show: ["Phones", "Bomgar", "Tier 2"]  // Array of strings, shift types to show     
+            shifts_to_show: ["Phones", "Bomgar", "Tier 2"],  // Array of strings, shift types to show     
+            ss_remove_rows: true,
+            ss_ignore_filter: false
         })
 
 
@@ -62,7 +64,10 @@ chrome.storage.sync.get({
     range_minutes: 7,  // 0 <= range_minutes < interval_minutes/2, margin around time to check to activate, mostly used during testing, will be deprecated with better logic in the future
     check_on_15: true,  // Determines if the extension should check on 15,45 minute intervals, only here incase send_empty_notification is enabled
     send_empty_notification: false,  // If true, notifications of "No shift changes occuring" will be sent
-    shifts_to_show: []
+    shifts_to_show: [],
+    ss_remove_rows: true,
+    ss_ignore_filter: false
+
 }, function(configuration_dict){
     if (configuration_dict.shifts_to_show.length == 0){
         console.error("shifts_to_show.length = 0, something has gone wrong")
@@ -194,6 +199,16 @@ chrome.storage.sync.get({
                         }
                     }
 
+                    // TODO Upate to use softer colors
+                    // Set the colors to be used in color_schedule.js
+                    let colors = {
+                        starting: "rgba(255, 196, 0, 0.3)",
+                        active: "rgba(0, 255, 30, 0.3)",
+                        ending: "rgba(255, 0, 13, 0.3)",
+                        else: undefined
+                    }
+                    color_schedule_config = []
+
                     // Find the technicians getting on
                     let technicians_starting = [];
                     let technicians_ending = [];
@@ -202,6 +217,14 @@ chrome.storage.sync.get({
                             //technicians_starting.push(`${row[3]} - ${row[2]}`)
                             if (configuration_dict.shifts_to_show.includes(row[2])){
                                 technicians_starting.push(row)
+
+                                // Add a color
+                                color_schedule_config.push(colors.starting)
+
+                                // Check if ignore filter is set
+                            } else if (configuration_dict.ss_ignore_filter){
+                                // Add a color
+                                color_schedule_config.push(colors.starting)
                             }
                         
                         // Check for ending shift
@@ -209,12 +232,42 @@ chrome.storage.sync.get({
                             //technicians_ending.push(`${row[3]} - ${row[2]}`)
                             if (configuration_dict.shifts_to_show.includes(row[2])){
                                 technicians_ending.push(row)
+
+                                // Add a color
+                                color_schedule_config.push(colors.ending)
+
+                                // Check if ignore filter is set
+                            } else if (configuration_dict.ss_ignore_filter){
+                                // Add a color
+                                color_schedule_config.push(colors.ending)
                             }
+                        
+                        // Check for active shift which abides by the chosen filter conditions
+                        // console.log(configuration_dict.ss_ignore_filter)
+                        // console.log(configuration_dict.shifts_to_show.includes(row[2]))
+                        } else if ((row[6] < time_to_check && row[7] > time_to_check) && (configuration_dict.ss_ignore_filter || configuration_dict.shifts_to_show.includes(row[2]))){
+                                color_schedule_config.push(colors.active)
+
+                        // Else shift is not active and complies with filter conditions
+                        } else {
+                            color_schedule_config.push(colors.else)
                         }
+                    });
+
+                    // [13] Execute the coloring script
+                    let config = {
+                        colors: color_schedule_config,
+                        ss_remove_rows: configuration_dict.ss_remove_rows
+                    };
+                    chrome.tabs.executeScript(data.tabId, {
+                        code: 'var config = ' + JSON.stringify(config)
+                    }, function() {
+                        chrome.tabs.executeScript(tab.id, {file: 'scripts/color_schedule.js'});
                     });
 
                     console.log(technicians_starting)
                     console.log(technicians_ending)
+                    console.log(color_schedule_config)
                     console.log(rows)
 
                     // Calculate the hour in terms of AM & PM for notification titles
@@ -246,7 +299,10 @@ chrome.storage.sync.get({
                                 message: ``,
                                 iconUrl: "images/icon48.png",
                             }
-                            chrome.notifications.create(undefined, notification)
+                            chrome.notifications.create(undefined, notification, function(notif_id){
+                                // Store the notification ID in local storage
+                                chrome.storage.sync.set({notification_id: notif_id})
+                            });
                         }
                     } else {
                         // Determine title
@@ -286,6 +342,7 @@ chrome.storage.sync.get({
                             })
                         }
 
+                        // TODO Add in line length check to make sure overflow warning won't get pushed off
                         // Add in overflow warnings
                         if (technicians_starting.length >= 4){
                             notif_Items.splice(3, 0, {
@@ -314,7 +371,10 @@ chrome.storage.sync.get({
                             iconUrl: "images/icon48.png",
                             items: notif_Items
                         }           
-                        chrome.notifications.create(undefined, notification)
+                        chrome.notifications.create(undefined, notification, function(notif_id){
+                            // Store the notification ID in local storage
+                            chrome.storage.sync.set({notification_id: notif_id})
+                        });
                     }
 
                 });
@@ -332,6 +392,27 @@ chrome.runtime.onStartup.addListener(function() {
     chrome.storage.sync.set({
         tabId: -1,
         status: false
+    });
+});
+
+
+// On click handler for notifications to open the schedule source tab and focus the window
+chrome.notifications.onClicked.addListener(function(notification_id){
+    console.log("Notification clicked")
+
+    // Get the tabid and windowid from storage
+    chrome.storage.sync.get({
+        tabId: -1,
+        windowId: -1
+    }, function(configuration_dict){
+
+        // If the tabid and windowid are both valid, focus the window and select the tab
+        if (configuration_dict.tabId != -1 && configuration_dict.windowId != -1){
+            chrome.tabs.update(configuration_dict.tabId, {selected: true})
+            chrome.windows.update(configuration_dict.windowId, {focused: true})
+        } else {
+            console.log("Invalid tabid or windowid, can not focus and select")
+        }
     });
 });
 

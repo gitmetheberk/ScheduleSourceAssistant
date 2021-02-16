@@ -24,7 +24,9 @@ save_config.addEventListener("click", async () =>{
     // Update checkbox status
     chrome.storage.sync.set({
         send_empty_notification: document.getElementById("send_empty_notifications").checked,
-        check_on_15: document.getElementById("check_on_15").checked
+        check_on_15: document.getElementById("check_on_15").checked,
+        ss_remove_rows: document.getElementById("ss_remove_rows").checked,
+        ss_ignore_filter: document.getElementById("ss_ignore_filter").checked
     });
 
 
@@ -62,7 +64,9 @@ chrome.storage.sync.get({
     send_empty_notification: false,
     before_minutes: 0,
     padding_minutes: 0,
-    shifts_to_show: ["Phones", "Bomgar", "Tier 2"]
+    shifts_to_show: ["Phones", "Bomgar", "Tier 2"],
+    ss_remove_rows: true,
+    ss_ignore_filter: false
 }, function(configuration_dict) {
 
     // Populate the select with currently configured shift types
@@ -78,17 +82,20 @@ chrome.storage.sync.get({
 
     });
 
-    // Pre-check the send_empty_notifications checkbox
+    // TODO Use an array and a loop to make this more expandable
+    // Pre-check checkboxes
     if (configuration_dict.send_empty_notification){
         document.getElementById("send_empty_notifications").checked = true;
     }
-
-    // Pre-check the check_on_15 checkbox
     if (configuration_dict.check_on_15){
         document.getElementById("check_on_15").checked = true;
     }
-
-
+    if (configuration_dict.ss_remove_rows){
+        document.getElementById("ss_remove_rows").checked = true;
+    }
+    if (configuration_dict.ss_ignore_filter){
+        document.getElementById("ss_ignore_filter").checked = true;
+    }
 
 
 });

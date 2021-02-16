@@ -59,3 +59,5 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 10. https://stackoverflow.com/questions/14707313/set-checkbox-label-to-right-side-or-fixed-position
 11. https://stackoverflow.com/questions/16571393/the-best-way-to-check-if-tab-with-exact-id-exists-in-chrome
 12. https://stackoverflow.com/questions/2705583/how-to-simulate-a-click-with-javascript
+13. https://stackoverflow.com/questions/17567624/pass-a-parameter-to-a-content-script-injected-using-chrome-tabs-executescript
+14. https://stackoverflow.com/questions/11517150/how-to-change-background-color-of-cell-in-table-using-java-script

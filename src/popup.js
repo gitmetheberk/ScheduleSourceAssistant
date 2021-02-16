@@ -32,6 +32,11 @@ chrome.storage.sync.get({
       chrome.storage.sync.set({tabId: data[0].id}, function() {
         console.log(`tabID updated to ${data[0].id}`)
 
+        // Store the WindowID (Async delay is fine, shouldn't cause race conditiions)
+        chrome.windows.getCurrent({}, function(window){
+          chrome.storage.sync.set({windowId: window.id})
+        });
+
         // Calculate delayInMinutes (ex. time until minutes == 00, 15, 30, 45 - minutes_before)
         let now = new Date();
         let alarmDelay_minutes = configuration_dict.interval_minutes - now.getMinutes() % configuration_dict.interval_minutes;
@@ -77,7 +82,11 @@ chrome.storage.sync.get({
       })
 
     } else {
-      chrome.storage.sync.set({status: false}, function() {
+      chrome.storage.sync.set({
+        status: false,
+        tabId: -1,
+        windowId: -1
+      }, function() {
         console.log("Status: false")
         update_status();
 
@@ -106,6 +115,11 @@ popup_run_once.addEventListener("click", async () =>{
         chrome.tabs.executeScript(undefined, {code: `window.alert("Please activate the extension after navigating to today's schedule");`})
         return;
       }
+
+      // Store the WindowID (Async delay is fine, shouldn't cause race conditiions)
+      chrome.windows.getCurrent({}, function(window){
+        chrome.storage.sync.set({windowId: window.id})
+      });
 
       // Store the tabId and trigger the run_once alarm
       chrome.storage.sync.set({tabId: data.id}, function(){
@@ -139,8 +153,14 @@ update_status();  // Run update_status when the script is called
 // popup_test.addEventListener("click", async () =>{
 //   console.log("test button")
 
-//   console.log("test alarm triggering in 1 second(s)")
-//   chrome.alarms.create('run_once',{
-//     when: Date.now() + 1000,
-//   })
+//   // console.log("test alarm triggering in 1 second(s)")
+//   // chrome.alarms.create('run_once',{
+//   //   when: Date.now() + 1000,
+//   // })
+
+//   // chrome.storage.sync.get({tabId: -1}, function(dict){
+//   //   chrome.tabs.executeScript(dict.tabId, {file: scripts/color_schedule.js}, function(){
+//   //     console.log("Script injected")
+//   //   });
+//   // });
 // });
