@@ -57,3 +57,4 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 9. https://stackoverflow.com/questions/11821261/how-to-get-all-selected-values-from-select-multiple-multiple
 10. https://stackoverflow.com/questions/14707313/set-checkbox-label-to-right-side-or-fixed-position
 11. https://stackoverflow.com/questions/16571393/the-best-way-to-check-if-tab-with-exact-id-exists-in-chrome
+12. https://stackoverflow.com/questions/2705583/how-to-simulate-a-click-with-javascript

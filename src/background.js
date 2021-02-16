@@ -94,9 +94,10 @@ chrome.storage.sync.get({
                 chrome.storage.sync.set({tabId: -1, status: false})
 
             } else {
-                // First, reload to the tab to make sure we're getting the most up to date schedule information
                 //! Make sure this isn't commented out before creating a release
-                chrome.tabs.reload(data.tabId);
+                // [12] Utilizing the built in refresh button, refresh the schedule to ensure the data is up to date
+                chrome.tabs.executeScript(configuration_dict.tabId, {file: "scripts/ss_refresh.js"})
+                let refresh_delay = 5000;  // Delay in MS to wait before grabbing the data following a refresh
 
                 // Find the current shift change
                 let now = new Date;
@@ -316,8 +317,8 @@ chrome.storage.sync.get({
                     }
 
                 });
-                // Delay following page reload in ms (5 seconds might not be long enough, upped to 7.5 seconds)
-                }, 7500);
+                // Delay following page refresh (utilizing a refresh instead of a reload drastically reduces the amount of time needed here)
+                }, refresh_delay);
             }
         })
     });
