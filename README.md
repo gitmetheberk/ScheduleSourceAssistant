@@ -10,7 +10,7 @@ With all the duties a Student Leader must perform on a daily basis, it can be ch
 5. Click "Extensions"
 6. In the top right, click "Developer Mode"
 7. Click "Load unpacked"
-8. Select the folder containing the extension
+8. Select the folder containing the extension and then select <b>src</b>
 9. The extension should now be showing up in your browser
 10. If you can't see the extension, you may have to click on the small puzzle piece to show all extensions
 
