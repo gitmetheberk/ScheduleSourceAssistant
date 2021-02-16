@@ -6,26 +6,17 @@ chrome.storage.sync.get({
   schedulesource_url: "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",  // This is here as a failsafe in the event the URL changes in the future and needs to be configured manually
   interval_minutes : 15,
   before_minutes: 0,  // Minutes before 00, 15, 30, 45 the alarm will trigger
-  padding_minutes: 0  // Upon activating the extension, number of minutes past 00, 15, 30, 45 where it will still trigger
+  padding_minutes: 5  // Upon activating the extension, number of minutes past 00, 15, 30, 45 where it will still trigger
 }, function(configuration_dict){
-  
-  // TODO Reference the configuration_dict directly instead of assigning variables
-  // Grab configuration variables out of the configuration_dict
-  let interval_minutes = configuration_dict.interval_minutes  // Length of the interval (15 for deployment)
-  let before_minutes = configuration_dict.before_minutes  // Minutes before 00, 15, 30, 45 the alarm will trigger
-  let padding_minutes = configuration_dict.padding_minutes  // Upon activating the extension, number of minutes past 00, 15, 30, 45 where it will still trigger
-  let schedulesource_url = configuration_dict.schedulesource_url
 
-  // TODO Fix indentation on this section, it's all sorts of messed up
   // Get the current status and swap it, activating and deacting the alarm as needed
   chrome.storage.sync.get({status: false}, function(current_status){
     // Technically I could just assign to !status.status, but this is safer if status = undefined
     if (current_status.status == false){
       // Verify the current tab has the correct URL
       chrome.tabs.query({active: true, currentWindow: true}, function(data){
-        if (data[0].url != schedulesource_url){
-          // TODO this should happen on the active tab, not popup.html
-          window.alert("Please activate the extension after navigating to today's schedule");
+        if (data[0].url != configuration_dict.schedulesource_url){
+          chrome.tabs.executeScript(undefined, {code: `window.alert("Please activate the extension after navigating to today's schedule");`})
           return;
         }
         
@@ -43,17 +34,19 @@ chrome.storage.sync.get({
 
         // Calculate delayInMinutes (ex. time until minutes == 00, 15, 30, 45 - minutes_before)
         let now = new Date();
-        let alarmDelay_minutes = interval_minutes - now.getMinutes() % interval_minutes;
+        let alarmDelay_minutes = configuration_dict.interval_minutes - now.getMinutes() % configuration_dict.interval_minutes;
 
         // Modify alarmDelay_minutes based on configuration variables
-        if (alarmDelay_minutes < padding_minutes){
-          alarmDelay_minutes = 0;
-        } else {
-          // Check for a negative value after applying before_minutes
-          alarmDelay_minutes = alarmDelay_minutes - before_minutes
-          if (alarmDelay_minutes < 0) {
-            alarmDelay_minutes = 0
-          }
+        let run_now = false
+        if (now.getMinutes() % configuration_dict.interval_minutes < configuration_dict.padding_minutes){
+          run_now = true;
+        }
+
+        // Check for a negative value after applying before_minutes
+        alarmDelay_minutes = alarmDelay_minutes - configuration_dict.before_minutes
+        if (alarmDelay_minutes < 0) {
+          alarmDelay_minutes += configuration_dict.interval_minutes;
+          run_now = true
         }
 
         // Only trigger on the minute
@@ -61,18 +54,25 @@ chrome.storage.sync.get({
         let alarmStart_ms = (alarmDelay_minutes) * 60000 - (60 + now.getSeconds()) - (1000 + now.getMilliseconds());
         console.log(alarmStart_ms)
         if (alarmStart_ms < 0){
-          alarmStart_ms = 0;
+          alarmStart_ms += configuration_dict.interval_minutes * 60000;
+          run_now = true;
+          console.log("ERROR: You shouldn't be seeing this log")
         }
-        console.log(`Alarm starting in ${alarmStart_ms / 1000} seconds or ${alarmStart_ms / 60000} minutes`)
 
-          // TODO If the alarm was started with alarmStart_ms=0, delay, then start an alarm which starts on the correct minute
-          // Activate the alarm, if alarmDelay_minutes = 0, to avoid error, use a different alarm creation
-          chrome.alarms.create('run',{
-            when: Date.now() + alarmStart_ms,
-            periodInMinutes: interval_minutes
-          }
-        )
-        console.log("alarm set")
+        console.log(`Alarm starting in ${alarmStart_ms / 1000} seconds or ${alarmStart_ms / 60000} minutes`)
+        console.log(`Alarm also running now: ${run_now}`)
+
+        // Activate the alarm(s)
+        chrome.alarms.create('run',{
+          when: Date.now() + alarmStart_ms,
+          periodInMinutes: configuration_dict.interval_minutes
+        });
+
+        if (run_now){
+          chrome.alarms.create('run_once', {
+            when: Date.now() + 1000,
+          })
+        }
       });
       })
 
@@ -112,14 +112,8 @@ let popup_test = document.getElementById("popup_test");
 popup_test.addEventListener("click", async () =>{
   console.log("test button")
 
-  // let notif = {
-  //   type: 'basic',
-  //   title: 'notification test',
-  //   message: "big test",
-  //   iconUrl: "images/icon48.png"
-  //chrome.notifications.create('limitNotif', notif)
   console.log("test alarm triggering in 1 second(s)")
-  chrome.alarms.create('run',{
+  chrome.alarms.create('run_once',{
     when: Date.now() + 1000,
   })
 });

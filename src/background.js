@@ -16,7 +16,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
             check_on_15: true,  // Determines if the extension should check on 15,45 minute intervals, only here incase send_empty_notification is enabled
             send_empty_notification: true,  // If true, notifications of "No shift changes occuring" will be sent
             before_minutes: 0,  // Minutes before 00, 15, 30, 45 the alarm will trigger
-            padding_minutes: 0,  // Upon activating the extension, number of minutes past 00, 15, 30, 45 where it will still trigger
+            padding_minutes: 5,  // Upon activating the extension, number of minutes past 00, 15, 30, 45 where it will still trigger
             shifts_to_show: ["Phones", "Bomgar", "Tier 2"]  // Array of strings, shift types to show     
         })
 
@@ -48,8 +48,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 // Add a handler to catch the chrome.alarm events
 chrome.alarms.onAlarm.addListener(function(alarm) {
-    // TODO Add check to make sure it's the 'run' alarm
-    console.log("Service worker alarm, executing script")
+    // Check that it's the run alarm or the run_once alarm
+    if (alarm.name != 'run' && alarm.name != 'run_once'){
+        console.log(`Unknown alarm '${alarm.name}' detected`)
+        return
+    }
 
 // Load configuration variables from storage (welcome to the highest level of callback hell (I didn't tab this because there are two many tabs as is))
 chrome.storage.sync.get({
@@ -64,14 +67,6 @@ chrome.storage.sync.get({
         console.error("shifts_to_show.length = 0, something has gone wrong")
         return;
     }
-
-    // TODO Reference the configuration_dict directly instead of assigning variables
-    // Grab configuration variables out of the dict/json
-    let schedulesource_url = configuration_dict.schedulesource_url;
-    let interval_minutes = configuration_dict.interval_minutes;
-    let range_minutes = configuration_dict.range_minutes;
-    let check_on_15 = configuration_dict.check_on_15;
-    let send_empty_notification = configuration_dict.send_empty_notification;
     
     // TODO It may make more sense to store this in local storage
     // Grab the schedule source tabId
@@ -83,42 +78,51 @@ chrome.storage.sync.get({
 
         // Verify this tab exists and points to schedule source
         chrome.tabs.get(data.tabId, function(tab){
-            if (tab.url != schedulesource_url){
-                // TODO Implement error handling and user notification of the issue
-                chrome.storage.sync.set({tabId: -1})
-                console.log("Schedule Source is not where it should be")
+            // [11] Check to make sure the async function didn't throw an error, indicating the tab doesn't exist
+            if (chrome.runtime.lastError) {
+                console.log(`Error in background.js in tabs.get: ${chrome.runtime.lastError.message}`);
+                chrome.tabs.executeScript(undefined, {code: `window.alert("The tab containing schedule source could not be found, Schedule Source Assistant is now disabled")`})
+
+                // Set the status to disabled and invalidate the tabid
+                chrome.storage.sync.set({tabId: -1, status: false})
+
+            } else if (tab.url != configuration_dict.schedulesource_url){
+                chrome.storage.sync.set({tabId: -1, status: false})
+                chrome.tabs.executeScript(undefined, {code: `window.alert("The tab containing schedule source could not be found, Schedule Source Assistant is now disabled")`})
+                
+                // Set the status to disabled and invalidate the tabid
+                chrome.storage.sync.set({tabId: -1, status: false})
+
             } else {
                 // First, reload to the tab to make sure we're getting the most up to date schedule information
-
-                //! Uncomment this after testing
+                //! Make sure this isn't commented out before creating a release
                 chrome.tabs.reload(data.tabId);
-                console.log("reloading")
 
                 // Find the current shift change
                 let now = new Date;
                 let minutes = now.getMinutes();
                 let time_to_check
 
-                if ((minutes % interval_minutes) == 0){
+                if ((minutes % configuration_dict.interval_minutes) == 0){
                     // We're on an interval
                     time_to_check = minutes + now.getHours() * 60
 
-                } else if (minutes <= range_minutes){
+                } else if (minutes <= configuration_dict.range_minutes){
                     // We just passed the beginning of an hour
                     time_to_check = now.getHours() * 60
 
-                } else if (minutes >= 60 - range_minutes) {
+                } else if (minutes >= 60 - configuration_dict.range_minutes) {
                     // We're coming up on an hour
                     time_to_check = (now.getHours() + 1) * 60
 
                 } else {
                     // TODO Fix the edge cases when the extension shouldn't be running by resetting the alarm
                     // Must be 15, 30, or 45
-                    if ((minutes >= 15 - range_minutes) && (minutes <= 15 + range_minutes)){
+                    if ((minutes >= 15 - configuration_dict.range_minutes) && (minutes <= 15 + configuration_dict.range_minutes)){
                         time_to_check = (now.getHours()) * 60 + 15
-                    } else if ((minutes >= 30 - range_minutes) && (minutes <= 30 + range_minutes)){
+                    } else if ((minutes >= 30 - configuration_dict.range_minutes) && (minutes <= 30 + configuration_dict.range_minutes)){
                         time_to_check = (now.getHours()) * 60 + 30
-                    } else if ((minutes >= 45 - range_minutes) && (minutes <= 45 + range_minutes)){
+                    } else if ((minutes >= 45 - configuration_dict.range_minutes) && (minutes <= 45 + configuration_dict.range_minutes)){
                         time_to_check = (now.getHours()) * 60 + 45
                     } else {
                         console.error("Invalid or unknown time interval")
@@ -132,7 +136,7 @@ chrome.storage.sync.get({
                 console.log(`Shift change minutes: ${time_to_check}`)
 
                 // Check for check_on_15 option (does not check on :15 or :45)
-                if (!check_on_15 && ((time_to_check % 15) == 0) && ((time_to_check % 60) != 30)){
+                if (!configuration_dict.check_on_15 && ((time_to_check % 15) == 0) && ((time_to_check % 60) != 30)){
                     console.log("Aborting due to check_on_15")
                     return;
                 }
@@ -151,7 +155,7 @@ chrome.storage.sync.get({
                     // Split the string based on the new line charactersin the table
                     let rows = result.split(/\n/)
 
-                    // TODO Find the location the schedule starts instead of hardcoding it
+                    // Hardcoded splice, maybe find programatically? Not sure
                     // Remove excess rows from rows
                     rows.splice(0,39)
                     
@@ -188,7 +192,6 @@ chrome.storage.sync.get({
                         }
                     }
 
-                    // TODO It would be more efficient to do this earlier when we're already looping through technicians
                     // Find the technicians getting on
                     let technicians_starting = [];
                     let technicians_ending = [];
@@ -234,7 +237,7 @@ chrome.storage.sync.get({
                         console.log("No shift changes occuring")
 
                         // If no shifts are changing, send a basic notification
-                        if (send_empty_notification) {
+                        if (configuration_dict.send_empty_notification) {
                             let notification = {
                                 type: 'basic',
                                 title: `No shift changes occuring ${hour_AMPM}:${((time_to_check % 60) < 10) ? "0" : ""}${time_to_check % 60} ${AMPM}`,
@@ -244,7 +247,6 @@ chrome.storage.sync.get({
                             chrome.notifications.create(undefined, notification)
                         }
                     } else {
-                        // TODO These notification titles are open for change
                         // Determine title
                         let title;
                         if (technicians_starting.length != 0 && technicians_ending.length == 0){
@@ -314,17 +316,24 @@ chrome.storage.sync.get({
                     }
 
                 });
-                // Delay following page reload in ms (5 seconds seems safe even for slower computers)
-                }, 5000);
+                // Delay following page reload in ms (5 seconds might not be long enough, upped to 7.5 seconds)
+                }, 7500);
             }
         })
     });
 });
 });
 
-// TODO Add a onStart handler to disable if the page is no longer open
-// TODO Add an onClose handler for tabs to disable if the teamwork tab is closed
+
+// On start up, clear out the tabid and set the status to false
+chrome.runtime.onStartup.addListener(function() {
+    chrome.storage.sync.set({
+        tabId: -1,
+        status: false
+    });
+});
+
+
 // TODO Add check for limited media dispaly schedule source
 // TODO Account for cases where a technician is getting off & getting on (maybe just say transitioning techs?)
-// TODO Before releasing v1, remove extra console.logs
-// TODO Add MacOS specific notification text (since they can't see shift info)
+// TODO Verify schedule source date is correct

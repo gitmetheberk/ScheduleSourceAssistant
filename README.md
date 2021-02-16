@@ -11,7 +11,9 @@ With all the duties a Student Leader must perform on a daily basis, it can be ch
 6. In the top right, click "Developer Mode"
 7. Click "Load unpacked"
 8. Select the folder containing the extension
-9. The extension should now be showing up 
+9. The extension should now be showing up in your browser
+10. If you can't see the extension, you may have to click on the small puzzle piece to show all extensions
+
 
 ### MacOS - Additional Instructions
 Due to an issue with Chrome native notifications and macs running Catalina or higher versions of MacOS, there are a few extra steps to take to enable extension functionality:
@@ -21,8 +23,22 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 4. Restart Google Chrome
 
 
+## Using the extension
+1. Right click on the extension and click "Options"
+2. Configure the extenion as you see fit and save the configuration
+3. Navigate to todays schedule in schedule source
+4. Click on the extension (schedule source icon) in your extensions
+5. In the popup, click "Toggle" to activate the extension
+6. Wait for the next shift change and see what happens!
+7. Report any bugs to becker@tamu.edu or open an issue in the repository (https://github.tamu.edu/matthew-becker/ScheduleSourceAssistant)
+
+
+## Issues
+### Not receiving notifications
+* Make sure notifications are enabled in Windows/MacOS
+
+
 ## Planned Features
-* Advanced configuration options
 * Automatic schedule source color coding
 * Bug removal
 * More bug removal
@@ -40,3 +56,4 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 8. https://stackoverflow.com/questions/35882089/popup-is-not-appearing-when-used-page-action/35882614
 9. https://stackoverflow.com/questions/11821261/how-to-get-all-selected-values-from-select-multiple-multiple
 10. https://stackoverflow.com/questions/14707313/set-checkbox-label-to-right-side-or-fixed-position
+11. https://stackoverflow.com/questions/16571393/the-best-way-to-check-if-tab-with-exact-id-exists-in-chrome
