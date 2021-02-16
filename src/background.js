@@ -46,6 +46,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 
+// TODO There is a strange mix of sync.get()s in here, tabid is stored in data not configuration_dict, this should be fixed
 // Add a handler to catch the chrome.alarm events
 chrome.alarms.onAlarm.addListener(function(alarm) {
     // Check that it's the run alarm or the run_once alarm
@@ -96,7 +97,7 @@ chrome.storage.sync.get({
             } else {
                 //! Make sure this isn't commented out before creating a release
                 // [12] Utilizing the built in refresh button, refresh the schedule to ensure the data is up to date
-                chrome.tabs.executeScript(configuration_dict.tabId, {file: "scripts/ss_refresh.js"})
+                chrome.tabs.executeScript(data.tabId, {file: "scripts/ss_refresh.js"})
                 let refresh_delay = 5000;  // Delay in MS to wait before grabbing the data following a refresh
 
                 // Find the current shift change
