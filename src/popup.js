@@ -95,10 +95,26 @@ chrome.storage.sync.get({
 // Add an event handler for the run once button
 let popup_run_once = document.getElementById("popup_run_once");
 popup_run_once.addEventListener("click", async () =>{
-  // Trigger the run_once alarm in one second
-  chrome.alarms.create('run_once',{
-    when: Date.now() + 1000,
-  })
+  console.log("Running once")
+
+  // Get the schedulesource_url from storage
+  chrome.storage.sync.get({schedulesource_url: "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All"}, function(configuration_dict){
+
+    // Get the current tab and verify the url is correct
+    chrome.tabs.query({active: true, currentWindow: true}, function(data){
+      if (data[0].url != configuration_dict.schedulesource_url){
+        chrome.tabs.executeScript(undefined, {code: `window.alert("Please activate the extension after navigating to today's schedule");`})
+        return;
+      }
+
+      // Store the tabId and trigger the run_once alarm
+      chrome.storage.sync.set({tabId: data.id}, function(){
+        chrome.alarms.create('run_once',{
+          when: Date.now() + 1000,
+        });
+      })
+    });
+  });
 });
 
 
@@ -119,12 +135,12 @@ update_status();  // Run update_status when the script is called
 
 
 //* TEMP CODE
-let popup_test = document.getElementById("popup_test");
-popup_test.addEventListener("click", async () =>{
-  console.log("test button")
+// let popup_test = document.getElementById("popup_test");
+// popup_test.addEventListener("click", async () =>{
+//   console.log("test button")
 
-  console.log("test alarm triggering in 1 second(s)")
-  chrome.alarms.create('run_once',{
-    when: Date.now() + 1000,
-  })
-});
+//   console.log("test alarm triggering in 1 second(s)")
+//   chrome.alarms.create('run_once',{
+//     when: Date.now() + 1000,
+//   })
+// });
