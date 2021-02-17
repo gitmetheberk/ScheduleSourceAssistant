@@ -236,6 +236,8 @@ chrome.storage.sync.get({
                                 } else {
                                     color_schedule_config.push(colors.starting)
                                 }
+                            } else {
+                                color_schedule_config.push(colors.else)
                             }
                         
                         // Check for ending shift
@@ -259,6 +261,8 @@ chrome.storage.sync.get({
                                 } else {
                                     color_schedule_config.push(colors.ending)
                                 }
+                            } else {
+                                color_schedule_config.push(colors.else)
                             }
                         
                         // Check for active shift which abides by the chosen filter conditions
@@ -371,6 +375,7 @@ chrome.storage.sync.get({
                             })
                         }
 
+                        // TODO Overflow not working in condition ending < 4 + starting > 1
                         // TODO Add in line length check to make sure overflow warning won't get pushed off
                         // Add in overflow warnings
                         if (technicians_starting.length >= 4){
@@ -456,3 +461,4 @@ chrome.notifications.onClicked.addListener(function(notification_id){
 // TODO Add check for limited media dispaly schedule source
 // TODO Account for cases where a technician is getting off & getting on (maybe just say transitioning techs?)
 // TODO Verify schedule source date is correct
+// TODO Mac notifications are only displaying a single line after recent changes, could this have something to do with notification IDs all being the same?
