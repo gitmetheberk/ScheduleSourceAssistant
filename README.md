@@ -23,6 +23,16 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 4. Restart Google Chrome
 
 
+### Updating the extension
+1. To update the extension, first download the new .zip file containing the updated code
+2. Unzip the file and copy all of the files (including src)
+3. Paste the new files into the folder where the old version of the extension is currently installed
+4. Click "replace" or "overwrite" if prompted
+5. Open up the extensions menu in Chrome and click "Update"
+6. Check the options page for new options
+      * Your old preferences will be saved between versions
+
+
 ## Using the extension
 1. Right click on the extension and click "Options"
 2. Configure the extenion as you'd like and save the configuration
