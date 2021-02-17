@@ -1,5 +1,5 @@
 # Schedule Source Assistant
-With all the duties a Student Leader must perform on a daily basis, it can be challenging to remember the little things such as monitoring the schedule. This extension aims to help with that. Utilizing advanced programming technology, and hours of pain, sweat, and tears, this extension now does the thinking for you. It lets you know
+With all the duties a Student Leader must perform on a daily basis, it can be challenging to remember the little things such as monitoring the schedule. This extension aims to help with that. Utilizing advanced programming technology, and hours of pain, sweat, and tears, this extension now does the thinking for you. It reminds you when technicians should be starting their shifts, when they should be ending their shifts, and who should be on shift right now.
 
 
 ## Installation
@@ -26,12 +26,22 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 ## Using the extension
 1. Right click on the extension and click "Options"
 2. Configure the extenion as you'd like and save the configuration
+    * Even if you don't change anything, make sure to save the configuration
 3. Navigate to todays schedule in schedule source
-4. Click on the extension (schedule source icon) in your extensions
-5. Click "Run once" to make sure you're receiving notifications from the extension (It may take a few seconds, so be patient)
+4. Click on the extension (Schedule Source icon) in your extensions
+5. Click "Run once" to make sure you're receiving notifications from the extension and it's able to interact with Schedule Source (It may take a few seconds, so be patient)
 6. Click "Toggle" to activate the extension
-7. Wait for the next shift change and see what happens!
-8. Report any bugs to becker@tamu.edu or open an issue in the repository (https://github.tamu.edu/matthew-becker/ScheduleSourceAssistant)
+7. Wait for the next shift change and see what happens, or click "Run once" again to highlight the schedule
+
+
+### Other information while using the extension
+* Color key:
+    * Shift highlighted in <b>red</b>: This shift is ending
+    * Shift highlighted in <b>orange</b>: This shift is starting
+    * Shift highlighted in <b>green</b>: This shift is on-going
+* Clicking the notification will bring you to Schedule Source
+* There are a lot configuration options in the extension's options page, if something's bothering you, see if you can change it there
+* If you have any suggestions, questions, or run into any bugs, send an email to becker@tamu.edu or open an issue in the repository (https://github.tamu.edu/matthew-becker/ScheduleSourceAssistant)
 
 
 ## Issues
@@ -40,17 +50,14 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 
 
 ## Planned Features
-* Automatic schedule source color coding
-* Bug removal
-* More bug removal
-* Better UI design (All suggestions welcome, I can not design UIs)
+* No further plans for now, but I'm always open to suggestions!
 
 
 ## Sources/Referenced:
 1. https://developer.chrome.com/
 2. https://stackoverflow.com/questions/38261197/how-to-check-if-a-key-is-set-in-chrome-storage/38261950
 3. https://stackoverflow.com/questions/40613173/chrome-extension-oninstalled-event
-4. https://www.w3schools.com/ (Basically all the CSS)
+4. https://www.w3schools.com/ (Essentially all the CSS)
 5. https://levelup.gitconnected.com/how-to-use-background-script-to-fetch-data-in-chrome-extension-ef9d7f69625d
 6. https://stackoverflow.com/questions/39840560/chrome-extension-get-active-tab-id-in-browser-action-popup
 7. https://sung.codes/blog/2019/02/17/getting-dom-content-from-chrome-extension-2/
@@ -59,5 +66,6 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 10. https://stackoverflow.com/questions/14707313/set-checkbox-label-to-right-side-or-fixed-position
 11. https://stackoverflow.com/questions/16571393/the-best-way-to-check-if-tab-with-exact-id-exists-in-chrome
 12. https://stackoverflow.com/questions/2705583/how-to-simulate-a-click-with-javascript
+13. https://developer.mozilla.org/en-US/
 13. https://stackoverflow.com/questions/17567624/pass-a-parameter-to-a-content-script-injected-using-chrome-tabs-executescript
 14. https://stackoverflow.com/questions/11517150/how-to-change-background-color-of-cell-in-table-using-java-script
