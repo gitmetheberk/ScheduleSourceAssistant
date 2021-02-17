@@ -162,6 +162,9 @@ chrome.storage.sync.get({
                     // Split the string based on the new line charactersin the table
                     let rows = result.split(/\n/)
 
+                    // Grab the current user out of rows
+                    let user = rows[8].trim()
+
                     // Hardcoded splice, maybe find programatically? Not sure
                     // Remove excess rows from rows
                     rows.splice(0,39)
@@ -204,6 +207,7 @@ chrome.storage.sync.get({
                         starting: "rgba(255, 196, 0, 0.3)",
                         active: "rgba(0, 255, 30, 0.3)",
                         ending: "rgba(255, 0, 13, 0.3)",
+                        user_shift: "rgba(255, 255, 0, 0.5)",
                         else: undefined
                     }
                     color_schedule_config = []
@@ -218,12 +222,20 @@ chrome.storage.sync.get({
                                 technicians_starting.push(row)
 
                                 // Add a color
-                                color_schedule_config.push(colors.starting)
+                                if (row[3] == user){
+                                    color_schedule_config.push(colors.user_shift)
+                                } else {
+                                    color_schedule_config.push(colors.starting)
+                                }
 
                                 // Check if ignore filter is set
                             } else if (configuration_dict.ss_ignore_filter){
                                 // Add a color
-                                color_schedule_config.push(colors.starting)
+                                if (row[3] == user){
+                                    color_schedule_config.push(colors.user_shift)
+                                } else {
+                                    color_schedule_config.push(colors.starting)
+                                }
                             }
                         
                         // Check for ending shift
@@ -233,19 +245,31 @@ chrome.storage.sync.get({
                                 technicians_ending.push(row)
 
                                 // Add a color
-                                color_schedule_config.push(colors.ending)
+                                if (row[3] == user){
+                                    color_schedule_config.push(colors.user_shift)
+                                } else {
+                                    color_schedule_config.push(colors.ending)
+                                }
 
                                 // Check if ignore filter is set
                             } else if (configuration_dict.ss_ignore_filter){
                                 // Add a color
-                                color_schedule_config.push(colors.ending)
+                                if (row[3] == user){
+                                    color_schedule_config.push(colors.user_shift)
+                                } else {
+                                    color_schedule_config.push(colors.ending)
+                                }
                             }
                         
                         // Check for active shift which abides by the chosen filter conditions
                         // console.log(configuration_dict.ss_ignore_filter)
                         // console.log(configuration_dict.shifts_to_show.includes(row[2]))
                         } else if ((row[6] < time_to_check && row[7] > time_to_check) && (configuration_dict.ss_ignore_filter || configuration_dict.shifts_to_show.includes(row[2]))){
+                            if (row[3] == user){
+                                color_schedule_config.push(colors.user_shift)
+                            } else {
                                 color_schedule_config.push(colors.active)
+                            }
 
                         // Else shift is not active and complies with filter conditions
                         } else {
