@@ -199,7 +199,6 @@ chrome.storage.sync.get({
                         }
                     }
 
-                    // TODO Upate to use softer colors
                     // Set the colors to be used in color_schedule.js
                     let colors = {
                         starting: "rgba(255, 196, 0, 0.3)",
