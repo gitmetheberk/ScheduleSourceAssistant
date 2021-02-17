@@ -10,7 +10,7 @@
     },
     "content_scripts": [{
       "matches": ["https://schedulesource.net/Enterprise/TeamWork5/Emp/Sch*", "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch*"],
-      "js": ["enable_icon.js"]
+      "js": ["scripts/enable_icon.js"]
     }],
     "options_page": "options.html",
     "page_action":{

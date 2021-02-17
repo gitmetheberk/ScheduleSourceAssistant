@@ -298,13 +298,14 @@ chrome.storage.sync.get({
                     let AMPM;
                     if (Math.floor(time_to_check / 60) > 12){
                         hour_AMPM = Math.floor(time_to_check / 60) - 12
-                        AMPM = "PM"
+                        if (time_to_check / 60 >= 24){
+                            AMPM = "AM"
+                        } else {
+                            AMPM = "PM"
+                        }
                     } else if (Math.floor(time_to_check / 60) == 12){
                         hour_AMPM = 12
                         AMPM = "PM"
-                    } else if (time_to_check < 60){
-                        hour_AMPM = 12
-                        AMPM = "AM"
                     } else {
                         hour_AMPM = Math.floor(time_to_check / 60)
                         AMPM = "AM"
@@ -322,9 +323,14 @@ chrome.storage.sync.get({
                                 message: ``,
                                 iconUrl: "images/icon48.png",
                             }
-                            chrome.notifications.create(undefined, notification, function(notif_id){
-                                // Store the notification ID in local storage
-                                chrome.storage.sync.set({notification_id: notif_id})
+                            
+                            // Clear the previous notification and send a new one
+                            chrome.notifications.clear('ScheduleSourceNotification', function(){
+                                chrome.notifications.create('ScheduleSourceNotification', notification, function(notif_id){
+                                    
+                                    // Store the notification ID in local storage
+                                    chrome.storage.sync.set({notification_id: notif_id})
+                                });
                             });
                         }
                     } else {
@@ -394,9 +400,13 @@ chrome.storage.sync.get({
                             iconUrl: "images/icon48.png",
                             items: notif_Items
                         }           
-                        chrome.notifications.create(undefined, notification, function(notif_id){
-                            // Store the notification ID in local storage
-                            chrome.storage.sync.set({notification_id: notif_id})
+                        // Clear the previous notification and send a new one
+                        chrome.notifications.clear('ScheduleSourceNotification', function(){
+                            chrome.notifications.create('ScheduleSourceNotification', notification, function(notif_id){
+                                
+                                // Store the notification ID in local storage
+                                chrome.storage.sync.set({notification_id: notif_id})
+                            });
                         });
                     }
 
@@ -437,6 +447,9 @@ chrome.notifications.onClicked.addListener(function(notification_id){
             console.log("Invalid tabid or windowid, can not focus and select")
         }
     });
+
+    // Clear the notification (since this doesn't happen automatically on MacOS)
+    chrome.notifications.clear(notification_id)
 });
 
 
