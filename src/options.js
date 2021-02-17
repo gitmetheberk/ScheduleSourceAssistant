@@ -1,7 +1,7 @@
 // TODO Configuration options for padding_minutes, before_minutes
 
 // List of all shift types (may change from time to time, too many as is)
-let all_shifts = ["Phones", "Bomgar", "Tier 2", "Trainee", "Student Leader", "Info Desk", "Counter", "Knowledge", "Endpoint Team", "TAMU-Health-Support", "Project"]
+let all_shifts = ["Phones", "Bomgar", "Tier 2", "Trainee", "Student Leader", "Info Desk", "Counter", "Knowledge", "Endpoint Team", "TAMU-Health-Support", "Project", "Trainer"]
 
 
 // Add a handler for the save button
