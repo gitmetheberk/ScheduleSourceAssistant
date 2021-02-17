@@ -57,7 +57,7 @@ function getSelectValues(select) {
 function onLoad(){
 // Get the current configuration settings
 chrome.storage.sync.get({
-    schedulesource_url: "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",
+    schedulesource_url: "schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",
     interval_minutes: 15,
     range_minutes: 7,
     // check_on_15: true,

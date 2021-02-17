@@ -3,7 +3,7 @@ let popup_enable = document.getElementById("popup_enable");
 popup_enable.addEventListener("click", async () =>{
 // Load configuration variables from storage (welcome to the highest level of callback hell (I didn't tab this because there are two many tabs as is))
 chrome.storage.sync.get({
-  schedulesource_url: "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",  // This is here as a failsafe in the event the URL changes in the future and needs to be configured manually
+  schedulesource_url: "schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",  // This is here as a failsafe in the event the URL changes in the future and needs to be configured manually
   interval_minutes : 15,
   before_minutes: 0,  // Minutes before 00, 15, 30, 45 the alarm will trigger
   padding_minutes: 5  // Upon activating the extension, number of minutes past 00, 15, 30, 45 where it will still trigger
@@ -15,7 +15,8 @@ chrome.storage.sync.get({
     if (current_status.status == false){
       // Verify the current tab has the correct URL
       chrome.tabs.query({active: true, currentWindow: true}, function(data){
-        if (data[0].url != configuration_dict.schedulesource_url){
+        console.log(data[0].url)
+        if (!data[0].url.endsWith(configuration_dict.schedulesource_url)){
           chrome.tabs.executeScript(undefined, {code: `window.alert("Please activate the extension after navigating to today's schedule");`})
           return;
         }
@@ -108,22 +109,24 @@ popup_run_once.addEventListener("click", async () =>{
   console.log("Running once")
 
   // Get the schedulesource_url from storage
-  chrome.storage.sync.get({schedulesource_url: "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All"}, function(configuration_dict){
+  chrome.storage.sync.get({schedulesource_url: "schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All"}, function(configuration_dict){
 
     // Get the current tab and verify the url is correct
     chrome.tabs.query({active: true, currentWindow: true}, function(data){
-      if (data[0].url != configuration_dict.schedulesource_url){
+      console.log(`data: `)
+      console.log(data)
+      if (!data[0].url.endsWith(configuration_dict.schedulesource_url)){
         chrome.tabs.executeScript(undefined, {code: `window.alert("Please activate the extension after navigating to today's schedule");`})
         return;
       }
 
-      // Store the WindowID (Async delay is fine, shouldn't cause race conditiions)
+      // Store the WindowID (Async delay is fine, shouldn't cause race conditiions...)
       chrome.windows.getCurrent({}, function(window){
         chrome.storage.sync.set({windowId: window.id})
       });
 
       // Store the tabId and trigger the run_once alarm
-      chrome.storage.sync.set({tabId: data.id}, function(){
+      chrome.storage.sync.set({tabId: data[0].id}, function(){
         chrome.alarms.create('run_once',{
           when: Date.now() + 1000,
         });

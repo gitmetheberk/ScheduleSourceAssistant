@@ -10,7 +10,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
             status: false,
 
             // Configuration variables
-            schedulesource_url: "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",
+            schedulesource_url: "schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",
             interval_minutes: 15,  // Length of the interval (15 for deployment)
             range_minutes: 7,  // 0 <= range_minutes < interval_minutes/2, margin around time to check to activate, mostly used during testing, will be deprecated with better logic in the future
             // Deprecated: check_on_15: true,  // Determines if the extension should check on 15,45 minute intervals, only here incase send_empty_notification is enabled
@@ -59,7 +59,7 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
 
 // Load configuration variables from storage (welcome to the highest level of callback hell (I didn't tab this because there are two many tabs as is))
 chrome.storage.sync.get({
-    schedulesource_url: "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",  // This is here as a failsafe in the event the URL changes in the future and needs to be configured manually
+    schedulesource_url: "schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",  // This is here as a failsafe in the event the URL changes in the future and needs to be configured manually
     interval_minutes : 15,
     range_minutes: 7,  // 0 <= range_minutes < interval_minutes/2, margin around time to check to activate, mostly used during testing, will be deprecated with better logic in the future
     // check_on_15: true,  // Determines if the extension should check on 15,45 minute intervals, only here incase send_empty_notification is enabled
@@ -92,8 +92,8 @@ chrome.storage.sync.get({
                 // Set the status to disabled and invalidate the tabid
                 chrome.storage.sync.set({tabId: -1, status: false})
 
-            } else if (tab.url != configuration_dict.schedulesource_url){
-                chrome.storage.sync.set({tabId: -1, status: false})
+            } else if (!tab.url.endsWith(configuration_dict.schedulesource_url)){
+                console.log(`Error in background.js in tabs.get: !tab.url.endsWith(configuration_dict.schedulesource_url): ${tab.url}`);
                 chrome.tabs.executeScript(undefined, {code: `window.alert("The tab containing schedule source could not be found, Schedule Source Assistant is now disabled")`})
                 
                 // Set the status to disabled and invalidate the tabid
