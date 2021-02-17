@@ -103,7 +103,7 @@ chrome.storage.sync.get({
                 //! Make sure this isn't commented out before creating a release
                 // [12] Utilizing the built in refresh button, refresh the schedule to ensure the data is up to date
                 chrome.tabs.executeScript(data.tabId, {file: "scripts/ss_refresh.js"})
-                let refresh_delay = 5000;  // Delay in MS to wait before grabbing the data following a refresh
+                let refresh_delay = 10000;  // Upped to 10000ms, slow hot spot internet means 5000 isn't enough
 
                 // Find the current shift change
                 let now = new Date;
