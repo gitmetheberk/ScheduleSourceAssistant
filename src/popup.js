@@ -113,8 +113,6 @@ popup_run_once.addEventListener("click", async () =>{
 
     // Get the current tab and verify the url is correct
     chrome.tabs.query({active: true, currentWindow: true}, function(data){
-      console.log(`data: `)
-      console.log(data)
       if (!data[0].url.endsWith(configuration_dict.schedulesource_url)){
         chrome.tabs.executeScript(undefined, {code: `window.alert("Please activate the extension after navigating to today's schedule");`})
         return;
@@ -133,6 +131,18 @@ popup_run_once.addEventListener("click", async () =>{
       })
     });
   });
+
+  // Change the text of the run_once button to "Running..."
+  popup_run_once.disabled = true;
+  popup_run_once.innerHTML = "<strong>Running...</strong>"
+
+  // TODO Delay based off of hardcoded values, should utilize sync
+  // Change back after 11 seconds (run_once delay + background.js/refresh_delay)
+  setTimeout(() => {
+    popup_run_once.disabled = false;
+    popup_run_once.innerHTML = "<strong>Run once</strong>"
+  }, 6000);
+
 });
 
 
