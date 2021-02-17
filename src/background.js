@@ -273,7 +273,7 @@ chrome.storage.sync.get({
                     let hour_AMPM;
                     let AMPM;
                     if (Math.floor(time_to_check / 60) > 12){
-                        hour_AMPM = now.getHours() - 12
+                        hour_AMPM = Math.floor(time_to_check / 60) - 12
                         AMPM = "PM"
                     } else if (Math.floor(time_to_check / 60) == 12){
                         hour_AMPM = 12
@@ -282,7 +282,7 @@ chrome.storage.sync.get({
                         hour_AMPM = 12
                         AMPM = "AM"
                     } else {
-                        hour_AMPM = now.getHours()
+                        hour_AMPM = Math.floor(time_to_check / 60)
                         AMPM = "AM"
                     }
 
