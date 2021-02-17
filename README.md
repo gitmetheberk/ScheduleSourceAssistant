@@ -36,9 +36,10 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 
 ### Other information while using the extension
 * Color key:
-    * Shift highlighted in <b>red</b>: This shift is ending
-    * Shift highlighted in <b>orange</b>: This shift is starting
-    * Shift highlighted in <b>green</b>: This shift is on-going
+    * Shift highlighted in <b>red</b>:       This shift is ending
+    * Shift highlighted in <b>orange</b>:    This shift is starting
+    * Shift highlighted in <b>green</b>:     This shift is on-going
+    * Shift highlighted in <b>yellow</b>:    This is your shift
 * Clicking the notification will bring you to Schedule Source
 * There are a lot configuration options in the extension's options page, if something's bothering you, see if you can change it there
 * If you have any suggestions, questions, or run into any bugs, send an email to becker@tamu.edu or open an issue in the repository (https://github.tamu.edu/matthew-becker/ScheduleSourceAssistant)
@@ -50,6 +51,7 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 
 
 ## Planned Features
+* Bug squashing (I'm sure they're lurking around every function)
 * No further plans for now, but I'm always open to suggestions!
 
 
