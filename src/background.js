@@ -13,7 +13,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
             schedulesource_url: "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",
             interval_minutes: 15,  // Length of the interval (15 for deployment)
             range_minutes: 7,  // 0 <= range_minutes < interval_minutes/2, margin around time to check to activate, mostly used during testing, will be deprecated with better logic in the future
-            check_on_15: true,  // Determines if the extension should check on 15,45 minute intervals, only here incase send_empty_notification is enabled
+            // Deprecated: check_on_15: true,  // Determines if the extension should check on 15,45 minute intervals, only here incase send_empty_notification is enabled
             send_empty_notification: true,  // If true, notifications of "No shift changes occuring" will be sent
             before_minutes: 0,  // Minutes before 00, 15, 30, 45 the alarm will trigger
             padding_minutes: 5,  // Upon activating the extension, number of minutes past 00, 15, 30, 45 where it will still trigger
@@ -62,7 +62,7 @@ chrome.storage.sync.get({
     schedulesource_url: "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",  // This is here as a failsafe in the event the URL changes in the future and needs to be configured manually
     interval_minutes : 15,
     range_minutes: 7,  // 0 <= range_minutes < interval_minutes/2, margin around time to check to activate, mostly used during testing, will be deprecated with better logic in the future
-    check_on_15: true,  // Determines if the extension should check on 15,45 minute intervals, only here incase send_empty_notification is enabled
+    // check_on_15: true,  // Determines if the extension should check on 15,45 minute intervals, only here incase send_empty_notification is enabled
     send_empty_notification: false,  // If true, notifications of "No shift changes occuring" will be sent
     shifts_to_show: [],
     ss_remove_rows: true,
@@ -143,10 +143,10 @@ chrome.storage.sync.get({
                 console.log(`Shift change minutes: ${time_to_check}`)
 
                 // Check for check_on_15 option (does not check on :15 or :45)
-                if (!configuration_dict.check_on_15 && ((time_to_check % 15) == 0) && ((time_to_check % 60) != 30)){
-                    console.log("Aborting due to check_on_15")
-                    return;
-                }
+                // if (!configuration_dict.check_on_15 && ((time_to_check % 15) == 0) && ((time_to_check % 60) != 30)){
+                //     console.log("Aborting due to check_on_15")
+                //     return;
+                // }
                 
 
                 // Provide a few seconds for page to load
