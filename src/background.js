@@ -375,7 +375,6 @@ chrome.storage.sync.get({
                             })
                         }
 
-                        // TODO Overflow not working in condition ending < 4 + starting > 1
                         // TODO Add in line length check to make sure overflow warning won't get pushed off
                         // Add in overflow warnings
                         if (technicians_starting.length >= 4){
@@ -392,6 +391,11 @@ chrome.storage.sync.get({
                             notif_Items.splice(3, 0, {
                                 title: `${0} more starting`,
                                 message: `${technicians_ending.length - 3} ending`
+                            })
+                        } else if (technicians_starting.length + technicians_ending.length > 4){
+                            notif_Items.splice(3, 0, {
+                                title: `${0} more starting`,
+                                message: `${technicians_ending.length - (3 - technicians_starting.length)} more ending`
                             })
                         }
 
