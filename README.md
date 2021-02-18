@@ -1,5 +1,7 @@
 # Schedule Source Assistant
-With all the duties a Student Leader must perform on a daily basis, it can be challenging to remember the little things such as monitoring the schedule. This extension aims to help with that. Utilizing advanced programming technology, and hours of pain, sweat, and tears, this extension now does the thinking for you. It reminds you when technicians should be starting their shifts, when they should be ending their shifts, and who should be on shift right now.
+With all the duties a Student Leader must perform on a daily basis, it can be challenging to remember the little things such as monitoring the schedule. This extension aims to help with that. Utilizing advanced programming technology, and hours of pain, sweat, and tears, this extension now does the thinking for you. It reminds you when technicians should be starting their shifts, when they should be ending their shifts, and who should be on shift right now. 
+
+To help you read through the schedule, after sending a notification, the schedule on Schedule Source is modified to show you who's getting on, who should be on, etc! More information on this below.
 
 
 ## Installation
@@ -10,7 +12,8 @@ With all the duties a Student Leader must perform on a daily basis, it can be ch
 5. Click "Extensions"
 6. In the top right, click "Developer Mode"
 7. Click "Load unpacked"
-8. Open the folder containing the extension and then select the <b>src</b> folder
+8. Open the main folder containing the extension and then select the '<b>src</b>' folder
+     * If you get an error saying the manifest could not be loaded, make sure you're selecting the '<b>src</b>' folder and try again
 9. The extension should now be showing up in your browser
 10. If you can't see the extension, you may have to click on the small puzzle piece to show all extensions
 
@@ -36,7 +39,6 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 ## Using the extension
 1. Right click on the extension and click "Options"
 2. Configure the extenion as you'd like and save the configuration
-    * Even if you don't change anything, make sure to save the configuration
 3. Navigate to todays schedule in schedule source
 4. Click on the extension (Schedule Source icon) in your extensions
 5. Click "Run once" to make sure you're receiving notifications from the extension and it's able to interact with Schedule Source (It may take a few seconds, so be patient)
@@ -44,20 +46,20 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 7. Wait for the next shift change and see what happens, or click "Run once" again to highlight the schedule
 
 
-### Other information while using the extension
+### Other information
 * Color key:
-    * Shift highlighted in <b>red</b>:       This shift is ending
-    * Shift highlighted in <b>orange</b>:    This shift is starting
-    * Shift highlighted in <b>green</b>:     This shift is on-going
-    * Shift highlighted in <b>yellow</b>:    This is your shift
-* Clicking the notification will bring you to Schedule Source
+    * Shift highlighted in 🔴<b>red</b>:       This shift is ending
+    * Shift highlighted in 🟠<b>orange</b>:    This shift is starting
+    * Shift highlighted in 🟢<b>green</b>:     This shift is on-going
+    * Shift highlighted in 🟡<b>yellow</b>:    This is your shift
+* Clicking the notification will bring you to the schedule on Schedule Source
 * There are a lot configuration options in the extension's options page, if something's bothering you, see if you can change it there
-* If you have any suggestions, questions, or run into any bugs, send an email to becker@tamu.edu or open an issue in the repository (https://github.tamu.edu/matthew-becker/ScheduleSourceAssistant)
+* If you have any suggestions, questions, or run into any bugs, send an email to becker@tamu.edu, open an issue in the repository (https://github.tamu.edu/matthew-becker/ScheduleSourceAssistant/issues), or shoot me a message on Teams!
 
 
-## Issues
-### Not receiving notifications
-* Make sure notifications are enabled in Windows/MacOS for Google Chrome
+## Known issues
+### MacOS users can only see one row of technician information in notifications
+* Unfortunately, due to the way the Google Chrome.Notifications API works on MacOS, this is an unavoidable issue and can not be fixed. 
 
 
 ## Planned Features
@@ -81,3 +83,4 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 13. https://developer.mozilla.org/en-US/
 13. https://stackoverflow.com/questions/17567624/pass-a-parameter-to-a-content-script-injected-using-chrome-tabs-executescript
 14. https://stackoverflow.com/questions/11517150/how-to-change-background-color-of-cell-in-table-using-java-script
+15. https://stackoverflow.com/questions/11509830/how-to-add-color-to-githubs-readme-md-file
