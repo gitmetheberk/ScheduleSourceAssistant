@@ -17,7 +17,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
             send_empty_notification: true,  // If true, notifications of "No shift changes occuring" will be sent
             before_minutes: 0,  // Minutes before 00, 15, 30, 45 the alarm will trigger
             padding_minutes: 5,  // Upon activating the extension, number of minutes past 00, 15, 30, 45 where it will still trigger
-            shifts_to_show: ["Phones", "Bomgar", "Tier 2"],  // Array of strings, shift types to show     
+            shifts_to_show: ["Phones", "Bomgar", "Tier 2", "Student Leader"],  // Array of strings, shift types to show     
             ss_remove_rows: true,
             ss_ignore_filter: false
         })
