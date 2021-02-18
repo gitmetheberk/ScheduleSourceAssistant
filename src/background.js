@@ -23,7 +23,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
         })
 
 
-    } else if (details.reason == "update"){
+    } else if (details.reason == "update" || "chrome_update"){
         console.log("chrome.runtime.onInstalled update detected")
         
         // Default the status to false following an update
@@ -35,7 +35,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
 
 
     } else {
-        console.error(["Invalid onInstalled reason", details.reason])
+        console.log(["Invalid onInstalled reason", details.reason])
     }
   });
 
