@@ -3,6 +3,8 @@
 // List of all shift types (may change from time to time, too many as is)
 let all_shifts = ["Phones", "Bomgar", "Tier 2", "Trainee", "Student Leader", "Info Desk", "Counter", "Knowledge", "Endpoint Team", "TAMU-Health-Support", "Project", "Trainer"]
 
+// Range for before_minutes, 0-X
+let before_minutes_range = 5
 
 // Add a handler for the save button
 let save_config = document.getElementById("save_config");
@@ -26,11 +28,11 @@ save_config.addEventListener("click", async () =>{
         send_empty_notification: document.getElementById("send_empty_notifications").checked,
         // check_on_15: document.getElementById("check_on_15").checked,
         ss_remove_rows: document.getElementById("ss_remove_rows").checked,
-        ss_ignore_filter: document.getElementById("ss_ignore_filter").checked
+        ss_ignore_filter: document.getElementById("ss_ignore_filter").checked,
+
+        // Update before_minutes
+        before_minutes: getSelectValues(document.getElementById("before_minutes"))[0]
     });
-
-
-
 });
 
 
@@ -50,7 +52,6 @@ function getSelectValues(select) {
     }
     return result;
   }
-
 
 
 // Run when the page first loads to populate existing information
@@ -97,7 +98,15 @@ chrome.storage.sync.get({
         document.getElementById("ss_ignore_filter").checked = true;
     }
 
-
+    // Populate the before_minutes select
+    let before_minutes = document.getElementById("before_minutes")
+    for (let i = 0; i <= before_minutes_range; i++){
+        if (i == configuration_dict.before_minutes){
+            before_minutes.innerHTML += `<option value=${i} selected>${i}</option>`
+        } else {
+            before_minutes.innerHTML += `<option value=${i}>${i}</option>`
+        }
+    }
 });
 }
 
