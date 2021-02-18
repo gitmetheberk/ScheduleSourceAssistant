@@ -67,6 +67,13 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 * No further plans for now, but I'm always open to suggestions!
 
 
+## Privacy
+* The extension can only read information from Schedule Source, no other websites are listed in manifest.json (You can check this manually if you'd like)
+* The only information stored by the extension is your configuration options and a few backend variables (ex. which tab the schedule is on)
+* No login information or other personal information is stored in the extension
+* Unlike Honorlock, this extension doesn't even collect data that could be sold to third parties
+
+
 ## Sources/Referenced:
 1. https://developer.chrome.com/
 2. https://stackoverflow.com/questions/38261197/how-to-check-if-a-key-is-set-in-chrome-storage/38261950
