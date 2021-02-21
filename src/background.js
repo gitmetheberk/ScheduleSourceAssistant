@@ -440,6 +440,7 @@ chrome.runtime.onStartup.addListener(function() {
 });
 
 
+// TODO Need to actively find the window of the tabid, if the user moves the tab to a new window, it won't focus properly
 // On click handler for notifications to open the schedule source tab and focus the window
 chrome.notifications.onClicked.addListener(function(notification_id){
     console.log("Notification clicked")

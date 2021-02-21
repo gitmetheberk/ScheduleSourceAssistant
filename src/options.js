@@ -1,4 +1,5 @@
-// TODO Configuration options for padding_minutes, before_minutes
+// TODO Configuration options for padding_minutes
+// TODO Configuration option to only remove SS shifts which have already passed
 
 // List of all shift types (may change from time to time, too many as is)
 let all_shifts = ["Phones", "Bomgar", "Tier 2", "Trainee", "Student Leader", "Info Desk", "Counter", "Knowledge", "Endpoint Team", "TAMU-Health-Support", "Project", "Trainer"]
