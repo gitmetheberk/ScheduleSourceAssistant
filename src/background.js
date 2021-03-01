@@ -212,7 +212,7 @@ chrome.storage.sync.get({
                         user_shift: "rgba(255, 255, 0, 0.5)",
                         else: undefined
                     }
-                    color_schedule_config = []
+                    let color_schedule_config = []
 
                     // Find the technicians getting on
                     let technicians_starting = [];
@@ -273,8 +273,10 @@ chrome.storage.sync.get({
                         } else if ((row[6] < time_to_check && row[7] > time_to_check) && (configuration_dict.ss_ignore_filter || configuration_dict.shifts_to_show.includes(row[2]))){
                             if (row[3] == user){
                                 color_schedule_config.push(colors.user_shift)
-                            } else {
+                            } else if (row[3] != "---EMPTY---") {
                                 color_schedule_config.push(colors.active)
+                            } else {
+                                color_schedule_config.push(colors.else)
                             }
 
                         // Else shift is not active and complies with filter conditions
