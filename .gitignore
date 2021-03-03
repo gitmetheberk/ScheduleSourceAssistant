@@ -351,3 +351,6 @@ MigrationBackup/
 
 # Ignore env file
 *.env
+
+# Ignore local directory
+local/

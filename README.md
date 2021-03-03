@@ -68,11 +68,16 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 
 
 ## Privacy
+### THIS SECTION WILL NEED UPDATING BEFORE THIS BRANCH IS MERGED AND RELEASED
 * The extension can only read information from Schedule Source, no other websites are listed in manifest.json (You can check this manually if you'd like)
 * The only information stored by the extension is your configuration options and a few backend variables (ex. which tab the schedule is on)
 * No login information or other personal information is stored in the extension
 * Unlike Honorlock, this extension doesn't even collect data that could be sold to third parties
 
+
+
+## Libraries:
+1. xml2json - https://goessner.net/download/prj/jsonxml/ - Creative Commons GNU LGPL
 
 ## Sources/Referenced:
 1. https://developer.chrome.com/
