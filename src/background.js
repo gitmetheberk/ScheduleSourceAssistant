@@ -270,7 +270,7 @@ chrome.storage.sync.get({
                         // Check for active shift which abides by the chosen filter conditions
                         // console.log(configuration_dict.ss_ignore_filter)
                         // console.log(configuration_dict.shifts_to_show.includes(row[2]))
-                        } else if ((row[6] < time_to_check && row[7] > time_to_check) && (configuration_dict.ss_ignore_filter || configuration_dict.shifts_to_show.includes(row[2]))){
+                        } else if ((row[6] < time_to_check && row[7] > time_to_check) && (configuration_dict.ss_ignore_filter || configuration_dict.shifts_to_show.includes(row[2])) && row[3] != "---EMPTY---"){
                             if (row[3] == user){
                                 color_schedule_config.push(colors.user_shift)
                             } else if (row[3] != "---EMPTY---") {
