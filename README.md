@@ -61,6 +61,10 @@ Due to an issue with Chrome native notifications and macs running Catalina or hi
 ### MacOS users can only see one row of technician information in notifications
 * Unfortunately, due to the way the Google Chrome.Notifications API works on MacOS, this is an unavoidable issue and can not be fixed. 
 
+### If the window is too small and one row becomes the width of multiple rows, the extension does not behave as expected
+* Due to the length of some names in Schedule Source, if the schedule window has it's width reduced to the point where any one row takes up two lines to accomodate the name, the extension is not able to properly color-code the schedule. 
+* To avoid this issue, it's recommended to keep the window wide enough where each row is the same size.
+
 
 ## Planned Features
 * Bug squashing (I'm sure they're lurking around every function)
