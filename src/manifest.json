@@ -1,6 +1,6 @@
 {
     "name": "Schedule Source Assistant",
-    "version": "1.0",
+    "version": "1.2",
     "description": "A custom schedule source assistant for Help Desk Central student leaders",
     "permissions": ["storage", "alarms", "tabs", "notifications", "windows",
       "https://www.schedulesource.net/", "https://schedulesource.net/"],
