@@ -55,7 +55,6 @@ chrome.storage.sync.get({
           run_now = true
         }
 
-        // TODO Alarms are triggering between 20-40 seconds after the minute
         // Only trigger on the minute
         console.log(alarmDelay_minutes)
         let alarmStart_ms = (alarmDelay_minutes) * 60000 - (60 + now.getSeconds()) - (1000 + now.getMilliseconds());
@@ -136,7 +135,6 @@ popup_run_once.addEventListener("click", async () =>{
   popup_run_once.disabled = true;
   popup_run_once.innerHTML = "<strong>Running...</strong>"
 
-  // TODO Delay based off of hardcoded values, should utilize sync
   // Change back after 11 seconds (run_once delay + background.js/refresh_delay)
   setTimeout(() => {
     popup_run_once.disabled = false;

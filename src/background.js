@@ -31,9 +31,6 @@ chrome.runtime.onInstalled.addListener(function(details) {
             status: false
         })
 
-        // TODO Add method to determine if any new sync variables need to be created and then create them
-
-
     } else {
         console.log(["Invalid onInstalled reason", details.reason])
     }
@@ -47,8 +44,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     } //console.log("Message received")
 });
 
-
-// TODO There is a strange mix of sync.get()s in here, tabid is stored in data not configuration_dict, this should be fixed
 // Add a handler to catch the chrome.alarm events
 chrome.alarms.onAlarm.addListener(function(alarm) {
     // Check that it's the run alarm or the run_once alarm
@@ -74,7 +69,6 @@ chrome.storage.sync.get({
         return;
     }
     
-    // TODO It may make more sense to store this in local storage
     // Grab the schedule source tabId
     chrome.storage.sync.get({tabId: -1}, function(data){
         if (data.tabId == -1){
@@ -123,7 +117,6 @@ chrome.storage.sync.get({
                     time_to_check = (now.getHours() + 1) * 60
 
                 } else {
-                    // TODO Fix the edge cases when the extension shouldn't be running by resetting the alarm
                     // Must be 15, 30, or 45
                     if ((minutes >= 15 - configuration_dict.range_minutes) && (minutes <= 15 + configuration_dict.range_minutes)){
                         time_to_check = (now.getHours()) * 60 + 15
@@ -155,7 +148,6 @@ chrome.storage.sync.get({
                 let code = `document.body.innerText;`;
                 // http://infoheap.com/chrome-extension-tutorial-access-dom/
                 chrome.tabs.executeScript(data.tabId, { code }, function (result) {
-                    // TODO Error detection for bad data from SS
                     // result has the return value from `code` which should be an array of length one
                     result = result[0]
 
@@ -379,7 +371,6 @@ chrome.storage.sync.get({
                             })
                         }
 
-                        // TODO Add in line length check to make sure overflow warning won't get pushed off
                         // Add in overflow warnings
                         if (technicians_starting.length >= 4){
                             notif_Items.splice(3, 0, {
@@ -441,8 +432,6 @@ chrome.runtime.onStartup.addListener(function() {
     });
 });
 
-
-// TODO Need to actively find the window of the tabid, if the user moves the tab to a new window, it won't focus properly
 // On click handler for notifications to open the schedule source tab and focus the window
 chrome.notifications.onClicked.addListener(function(notification_id){
     console.log("Notification clicked")
@@ -465,9 +454,3 @@ chrome.notifications.onClicked.addListener(function(notification_id){
     // Clear the notification (since this doesn't happen automatically on MacOS)
     chrome.notifications.clear(notification_id)
 });
-
-
-// TODO Add check for limited media dispaly schedule source
-// TODO Account for cases where a technician is getting off & getting on (maybe just say transitioning techs?)
-// TODO Verify schedule source date is correct
-// TODO Mac notifications are only displaying a single line after recent changes, could this have something to do with notification IDs all being the same?
