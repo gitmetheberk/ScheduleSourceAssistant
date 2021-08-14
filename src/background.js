@@ -535,10 +535,12 @@ function RunExtensionWithData(configuration, data, tab)
             } = GetHourWithMeridiem(shiftChange);
 
             if (shifts_starting.length == 0 && 
-                shifts_ending.length == 0 &&
-                configuration.send_empty_notification)
+                shifts_ending.length == 0)
             {
-                SendEmptyNotification(shiftChange, hour_AMPM, AMPM);
+                if (configuration.send_empty_notification)
+                {
+                    SendEmptyNotification(shiftChange, hour_AMPM, AMPM);
+                }
             } 
             else 
             {
