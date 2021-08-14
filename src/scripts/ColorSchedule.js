@@ -1,21 +1,16 @@
-function ColorSchedule(){
-    // Get the color data
+function ColorSchedule()
+{
     const colors = config.colors;
+    const shifts = document.getElementsByTagName("TR");
 
-    // Grab all table rows (idx 3 through length-1 contain shifts)
-    const rows = document.getElementsByTagName("TR")
+    let shiftColor;
+    for (let i = 3; i < shifts.length; i++){
+        shiftColor = colors[i - 3];
 
-    // Loop through rows, coloring as needed
-    let color
-    for (let i = 3; i < rows.length; i++){
-        // Grab the color for the current row
-        color = colors[i - 3];
-
-        // If the color is undefined and remove rows is enabled, remove the row, else set the color
-        if (color != undefined){
-            rows[i].style.backgroundColor = color;
+        if (shiftColor != undefined){
+            shifts[i].style.backgroundColor = shiftColor;
         } else if (config.ss_remove_rows) {
-            rows[i].innerHTML = ""
+            shifts[i].innerHTML = ""
         }
     }
 }
