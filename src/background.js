@@ -152,7 +152,7 @@ function ValidateTabAndLastError(configuration, tab)
 }
 
 function RefreshSchedule(data){
-    chrome.tabs.executeScript(data.tabId, {file: "scripts/ss_refresh.js"})
+    chrome.tabs.executeScript(data.tabId, {file: "scripts/RefreshSchedule.js"})
 }
 
 function GetShiftChange(configuration, time)
@@ -231,7 +231,6 @@ function ProcessInnerText(innerText)
 {
     let rows = innerText.split(/\n/)
 
-    // Grab the current user out of rows
     const user = rows[8].trim()
 
     // Remove excess rows from rows
@@ -364,7 +363,6 @@ function ProcessSchedule(configuration, shifts, shiftChange, user)
         }
     }
 
-    console.log(schedule_colors)
     return {
         schedule_colors,
         shifts_starting,
@@ -378,7 +376,7 @@ function ColorSchedule(config, data, tab)
     chrome.tabs.executeScript(data.tabId, {
         code: 'var config = ' + JSON.stringify(config)
     }, function() {
-        chrome.tabs.executeScript(tab.id, {file: 'scripts/color_schedule.js'});
+        chrome.tabs.executeScript(tab.id, {file: 'scripts/ColorSchedule.js'});
     });
 }
 
@@ -527,7 +525,6 @@ function RunExtensionWithData(configuration, data, tab)
             };
             ColorSchedule(config, data, tab);
 
-            console.log("shiftchange", shiftChange)
             const 
             {
                 hour_AMPM, 

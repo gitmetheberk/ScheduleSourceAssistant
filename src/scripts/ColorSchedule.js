@@ -1,9 +1,9 @@
-function color_schedule(){
+function ColorSchedule(){
     // Get the color data
-    let colors = config.colors;
+    const colors = config.colors;
 
     // Grab all table rows (idx 3 through length-1 contain shifts)
-    rows = document.getElementsByTagName("TR")
+    const rows = document.getElementsByTagName("TR")
 
     // Loop through rows, coloring as needed
     let color
@@ -20,4 +20,4 @@ function color_schedule(){
     }
 }
 
-color_schedule();
+ColorSchedule();
