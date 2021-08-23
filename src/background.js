@@ -10,7 +10,7 @@ function OnInstalled(details)
     {
         console.log("chrome.runtime.onInstalled installation detected")
         
-        // Initalize values in sync storage
+        // Application defaults
         chrome.storage.sync.set({
             version: 1.2, 
             status: false,
@@ -18,7 +18,6 @@ function OnInstalled(details)
             schedulesource_url: "schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",
             interval_minutes: 15,  // Length of the interval (15 for deployment)
             range_minutes: 7,  // 0 <= range_minutes < interval_minutes/2, margin around time to check to activate, mostly used during testing, will be deprecated with better logic in the future
-            // Deprecated: check_on_15: true,  // Determines if the extension should check on 15,45 minute intervals, only here incase send_empty_notification is enabled
             send_empty_notification: true,  // If true, notifications of "No shift changes occuring" will be sent
             before_minutes: 0,  // Minutes before 00, 15, 30, 45 the alarm will trigger
             padding_minutes: 5,  // Upon activating the extension, number of minutes past 00, 15, 30, 45 where it will still trigger
@@ -31,7 +30,6 @@ function OnInstalled(details)
     {
         console.log("chrome.runtime.onInstalled update detected")
         
-        // Default the status to false following an update
         chrome.storage.sync.set({
             status: false
         })
@@ -96,15 +94,15 @@ function RunExtension()
     chrome.storage.sync.get({
         schedulesource_url: "schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",  // This is here as a failsafe in the event the URL changes in the future and needs to be configured manually
         interval_minutes : 15,
-        range_minutes: 7,  // 0 <= range_minutes < interval_minutes/2, margin around time to check to activate, mostly used during testing, will be deprecated with better logic in the future
-        send_empty_notification: false,  // If true, notifications of "No shift changes occuring" will be sent
+        range_minutes: 7,
+        send_empty_notification: false,
         shifts_to_show: [],
         ss_remove_rows: true,
         ss_ignore_filter: false
 
     }, function(configuration)
     {
-        // Grab the schedule source tabId
+        // Grab the schedule source tabId and run
         chrome.storage.sync.get({tabId: -1}, function(data){
             if (data.tabId == -1){
                 console.error("tabId not set")
@@ -280,12 +278,9 @@ function ProcessSchedule(configuration, shifts, shiftChange, user)
                 {
                     schedule_colors.push(COLORS.starting)
                 }
-
-                // Check if ignore filter is set
             } 
             else if (configuration.ss_ignore_filter)
             {
-                // Add a color
                 if (shift[3] == user){
                     schedule_colors.push(COLORS.user_shift)
                 } else {
@@ -296,8 +291,6 @@ function ProcessSchedule(configuration, shifts, shiftChange, user)
             {
                 schedule_colors.push(COLORS.else)
             }
-        
-        // Check for ending shift
         } 
         else if (shift[7] == shiftChange && shift[3] != "---EMPTY---")
         {
@@ -305,7 +298,6 @@ function ProcessSchedule(configuration, shifts, shiftChange, user)
             {
                 shifts_ending.push(shift)
 
-                // Add a color
                 if (shift[3] == user)
                 {
                     schedule_colors.push(COLORS.user_shift)
@@ -314,12 +306,9 @@ function ProcessSchedule(configuration, shifts, shiftChange, user)
                 {
                     schedule_colors.push(COLORS.ending)
                 }
-
-                // Check if ignore filter is set
             } 
             else if (configuration.ss_ignore_filter)
             {
-                // Add a color
                 if (shift[3] == user){
                     schedule_colors.push(COLORS.user_shift)
                 } else {
@@ -333,7 +322,11 @@ function ProcessSchedule(configuration, shifts, shiftChange, user)
         
         // Check for active shift which abides by the chosen filter conditions
         } 
-        else if ((shift[6] < shiftChange && shift[7] > shiftChange) && (configuration.ss_ignore_filter || configuration.shifts_to_show.includes(shift[2])) && shift[3] != "---EMPTY---")
+        else if (
+            (shift[6] < shiftChange && shift[7] > shiftChange) &&
+            (configuration.ss_ignore_filter || configuration.shifts_to_show.includes(shift[2])) &&
+            shift[3] != "---EMPTY---"
+        )
         {
             if (shift[3] == user)
             {
@@ -347,11 +340,10 @@ function ProcessSchedule(configuration, shifts, shiftChange, user)
             {
                 schedule_colors.push(COLORS.else)
             }
-
-        // Else shift is not active and complies with filter conditions
         } 
         else 
         {
+            // Else shift is not active and complies with filter conditions
             schedule_colors.push(COLORS.else)
         }
     }
@@ -415,8 +407,6 @@ function SendNotification(notification)
 {
     chrome.notifications.clear('ScheduleSourceNotification', function(){
         chrome.notifications.create('ScheduleSourceNotification', notification, function(id){
-            
-            // Store the notification ID in local storage
             chrome.storage.sync.set({notification_id: id})
         });
     });
@@ -536,7 +526,6 @@ function RunExtensionWithData(configuration, data, tab)
             {
                 SendNotificationWithShifts(shiftChange, hour_AMPM, AMPM, shifts_starting, shifts_ending);
             }
-
         });
     }, REFRESH_DELAY);
 }
