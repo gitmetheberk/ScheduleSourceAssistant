@@ -2,14 +2,24 @@
     "name": "Schedule Source Assistant",
     "version": "1.2",
     "description": "A custom schedule source assistant for Help Desk Central student leaders",
-    "permissions": ["storage", "alarms", "tabs", "notifications", "windows",
-      "https://www.schedulesource.net/", "https://schedulesource.net/"],
+    "permissions": [
+      "storage", 
+      "alarms", 
+      "tabs", 
+      "notifications", 
+      "windows",
+      "https://www.schedulesource.net/", 
+      "https://schedulesource.net/"
+    ],
     "background": {
         "scripts": ["background.js"],
         "persistent": false
     },
     "content_scripts": [{
-      "matches": ["https://schedulesource.net/Enterprise/TeamWork5/Emp/Sch*", "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch*"],
+      "matches": [
+        "https://schedulesource.net/Enterprise/TeamWork5/Emp/Sch*", 
+        "https://www.schedulesource.net/Enterprise/TeamWork5/Emp/Sch*"
+      ],
       "js": ["scripts/EnableExtensionIcon.js"]
     }],
     "options_page": "options.html",
