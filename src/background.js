@@ -194,28 +194,27 @@ function GetShiftChange(configuration, time)
     return shiftChange;
 }
 
-function ConvertRowTimesToRelativeMinutes(rows)
+function ConvertRowTimesToRelativeMinutes(shifts)
 {
-    // Convert start and end times to relative minutes into the day, ex. 8am = 480
-    for (const row of rows){
+    for (const shift of shifts){
         // Loop through start and end times
         for (let j = 6; j < 8; j++){
-            // Get the hour and minute out of the string, time = [hour, minute]
-            let time = row[j].split(":")
-            let pm = time[1].endsWith("PM");
-            time[1] = time[1].split(" ")[0]
+            const time = shift[j].split(":")
 
-            // Conert to minutes into the day
-            row[j] = parseInt(time[0]) * 60 + parseInt(time[1])
+            const hour = time[0];
+            const minute = time[1].split(" ")[0]
+            const meridiem = minute.endsWith("PM");
+            
+            shift[j] = parseInt(hour) * 60 + parseInt(minute)
 
             // Check am/pm (accounting for edge cases)
-            if ((pm && time[0] != 12) || (!pm && time[0] == 12)){
-                row[j] = row[j] + 720
+            if ((meridiem && hour != 12) || (!meridiem && hour == 12)){
+                shift[j] = shift[j] + 720
             }
         }
     }
 
-    return rows;
+    return shifts;
 }
 
 function ProcessInnerText(innerText)
