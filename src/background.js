@@ -3,6 +3,7 @@ chrome.runtime.onMessage.addListener(OnMessage);
 chrome.alarms.onAlarm.addListener(OnAlarm);
 chrome.runtime.onStartup.addListener(OnStartup);
 chrome.notifications.onClicked.addListener(OnNotificationClicked);
+// Add listeners must to be at the top of the file
 
 function OnInstalled(details)
 {
@@ -92,7 +93,7 @@ const REFRESH_DELAY = 5000;
 function RunExtension()
 {
     chrome.storage.sync.get({
-        schedulesource_url: "schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",  // This is here as a failsafe in the event the URL changes in the future and needs to be configured manually
+        schedulesource_url: "schedulesource.net/Enterprise/TeamWork5/Emp/Sch/#All",
         interval_minutes : 15,
         range_minutes: 7,
         send_empty_notification: false,
