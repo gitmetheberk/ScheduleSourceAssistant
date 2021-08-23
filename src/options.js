@@ -10,32 +10,34 @@ const ALL_SHIFTS = [
     "Endpoint Team", 
     "TAMU-Health-Support", 
     "Project", 
-    "Trainer"]
+    "Trainer"
+]
 
 const MAXIMUM_ADVANCED_MINUTES = 5
 
 function GetSelectedOptionsFromFormSelect(select) 
 {
-    var selectedOptions = [];
-    var options = select && select.options;
+    let selectedOptions = [];
+    const options = select && select.options;
 
     for (const option of options) {
         if (option.selected) {
             selectedOptions.push(option.value || option.text);
         }
     }
+
     return selectedOptions;
 }
 
 function AddSaveButtonHandler(buttonID)
 {
-    let save_config_button = document.getElementById(buttonID);
+    const save_config_button = document.getElementById(buttonID);
     save_config_button.addEventListener("click", SaveButtonHandler);
 }
 
 async function SaveButtonHandler()
 {
-    let selected_shifts = GetSelectedOptionsFromFormSelect(document.getElementById("shifts"))
+    const selected_shifts = GetSelectedOptionsFromFormSelect(document.getElementById("shifts"))
 
     if (selected_shifts.length == 0)
     {
