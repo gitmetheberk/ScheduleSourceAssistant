@@ -40,13 +40,6 @@ function OnInstalled(details)
     {
         console.log(["Invalid onInstalled reason", details.reason])
     }
-
-    // Commented out in the CleanCode branch since we shouldn't be adding new features here
-    // chrome.runtime.getPlatformInfo(function(info) {
-    //     chrome.storage.sync.set({
-    //         PlatformOs: info.PlatformOs
-    //     })
-    // })
 }
 
 function OnMessage(request, sender) 
